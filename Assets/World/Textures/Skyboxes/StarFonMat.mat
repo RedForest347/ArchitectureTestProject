@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: StarFonMat
+  m_Shader: {fileID: 4800000, guid: 840f10e02d4d91c408d16c18c9448867, type: 3}
+  m_ShaderKeywords: _BIGSTARSSHOW_ON _MEDIUMSTARSSHOW_ON _SMALLSTARSSHOW_ON _SPACEDUSTSHOW_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Background:
+        m_Texture: {fileID: 2800000, guid: f1d4ed52250ffbb47818b5ad4003c8cc, type: 3}
+        m_Scale: {x: 7, y: 7}
+        m_Offset: {x: 0, y: 0}
+    - _Background_Mask:
+        m_Texture: {fileID: 2800000, guid: 1c73d2e650fb4d7408f8eb1a645169ac, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 0, y: 0}
+    - _BigStars:
+        m_Texture: {fileID: 2800000, guid: 5c36e99407917d64f991505bdf5ec8b0, type: 3}
+        m_Scale: {x: 3, y: 3}
+        m_Offset: {x: 0, y: 0}
+    - _BigStars_Mask:
+        m_Texture: {fileID: 2800000, guid: 1c73d2e650fb4d7408f8eb1a645169ac, type: 3}
+        m_Scale: {x: 3, y: 3}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MediumStars:
+        m_Texture: {fileID: 2800000, guid: 5c36e99407917d64f991505bdf5ec8b0, type: 3}
+        m_Scale: {x: 5, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _MediumStars_Mask:
+        m_Texture: {fileID: 2800000, guid: 1c73d2e650fb4d7408f8eb1a645169ac, type: 3}
+        m_Scale: {x: 5, y: 15}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SmallStars:
+        m_Texture: {fileID: 2800000, guid: 685fcc3c9b73a56478ef928281bae464, type: 3}
+        m_Scale: {x: 10, y: 10}
+        m_Offset: {x: 0, y: 0}
+    - _SmallStars_Mask:
+        m_Texture: {fileID: 2800000, guid: 1c73d2e650fb4d7408f8eb1a645169ac, type: 3}
+        m_Scale: {x: 3, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpaceDust:
+        m_Texture: {fileID: 2800000, guid: 685fcc3c9b73a56478ef928281bae464, type: 3}
+        m_Scale: {x: 7, y: 7}
+        m_Offset: {x: 0, y: 0}
+    - _SpaceDust_Mask:
+        m_Texture: {fileID: 2800000, guid: 1c73d2e650fb4d7408f8eb1a645169ac, type: 3}
+        m_Scale: {x: 5, y: 5}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BackgroundApproximationForce: 1
+    - _BackgroundColorForce: 2.88
+    - _BackgroundForce: 10
+    - _BackgroundShow: 0
+    - _BackgroundSpeed: 10
+    - _BigStarsApproximationForce: 1
+    - _BigStarsColorForce: 0.4
+    - _BigStarsForce: 1
+    - _BigStarsShow: 1
+    - _BigStarsSpeed: 1
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _MediumStarsApproximationForce: 1
+    - _MediumStarsColorForce: 1
+    - _MediumStarsForce: 1
+    - _MediumStarsShow: 1
+    - _MediumStarsSpeed: 600
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmallStarsApproximationForce: 1
+    - _SmallStarsColorForce: 1.7
+    - _SmallStarsForce: 1
+    - _SmallStarsShow: 1
+    - _SmallStarsSpeed: 700
+    - _SmoothnessTextureChannel: 0
+    - _SpaceDustApproximationForce: 1
+    - _SpaceDustColorForce: 0.8
+    - _SpaceDustForce: 1
+    - _SpaceDustShow: 1
+    - _SpaceDustSpeed: 10
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _BackgroundColor: {r: 0.023529412, g: 0.05490196, b: 0.09411765, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

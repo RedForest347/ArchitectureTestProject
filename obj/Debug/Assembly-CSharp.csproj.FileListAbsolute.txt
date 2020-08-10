@@ -1,0 +1,2 @@
+D:\Vanny\#3D_Projects\Unity3dFolder\Projects(U5)new\Architecture\ATP\ArchitectureTestProject_v0.4.2\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+D:\Vanny\#3D_Projects\Unity3dFolder\Projects(U5)new\Architecture\ATP\ArchitectureTestProject_v0.4.2\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
