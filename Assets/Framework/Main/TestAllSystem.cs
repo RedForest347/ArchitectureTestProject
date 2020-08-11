@@ -241,7 +241,7 @@ public class TestAllSystem : MonoBehaviour
         if (successfull)
         {
             Debug.Log("тест закончен успешно за " + time.ElapsedMilliseconds + " ms");
-            StressTest();
+            PerformanceTest();
         }
         else
             Debug.LogError("тест закончен с ошибками за " + time.ElapsedMilliseconds + " ms");
@@ -253,7 +253,7 @@ public class TestAllSystem : MonoBehaviour
         }
     }
 
-    void StressTest()
+    void PerformanceTest()
     {
         long test_time = 0;
         group1 = Group.Create(new ComponentsList<CompTest1, CompTest2, CompTest3, CompTest4, CompTest5, CompTest6>());
@@ -276,10 +276,10 @@ public class TestAllSystem : MonoBehaviour
 
         int dif = 100;
 
-        test_time += TestContains(dif);
-        test_time += TestIEnumerator(dif);
-        test_time += TestAddRemoveComponent(dif);
-        test_time += TestAddRemoveGroup(dif);
+        //test_time += TestContains(dif);
+        test_time += TestIEnumerator(dif * 100);
+        //test_time += TestAddRemoveComponent(dif);
+        //test_time += TestAddRemoveGroup(dif);
 
         for (int i = 0; i < gameObjects.Count; i++)
             Destroy(gameObjects[i]);
@@ -290,7 +290,7 @@ public class TestAllSystem : MonoBehaviour
         {
             Stopwatch time = Stopwatch.StartNew();
 
-            for (int i = 0; i < difficult; i++) // тест на Contains
+            for (int i = 0; i < difficult; i++)
             {
                 foreach (Group group in groups)
                 {
@@ -308,7 +308,7 @@ public class TestAllSystem : MonoBehaviour
         {
             Stopwatch time = Stopwatch.StartNew();
 
-            for (int i = 0; i < difficult * 100; i++)
+            for (int i = 0; i < difficult; i++)
             {
                 foreach (Group group in groups)
                 {
@@ -330,7 +330,7 @@ public class TestAllSystem : MonoBehaviour
             testObj.AddComponent<TestEntity4>();
             EntityBase entityBase = testObj.GetComponent<EntityBase>();
 
-            for (int i = 0; i < difficult * 10; i++)
+            for (int i = 0; i < difficult; i++)
             {
                 entityBase.RemoveComponent<CompTest1>();
                 entityBase.Add<CompTest1>();
@@ -351,7 +351,7 @@ public class TestAllSystem : MonoBehaviour
             testObj.AddComponent<TestEntity4>();
             EntityBase entityBase = testObj.GetComponent<EntityBase>();
 
-            for (int i = 0; i < difficult * 5; i++)
+            for (int i = 0; i < difficult; i++)
             {
                 entityBase.RemoveComponent<CompTest3>();
                 entityBase.RemoveComponent<CompTest4>();

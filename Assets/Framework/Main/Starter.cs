@@ -34,8 +34,8 @@ namespace RangerV
         }
 
         void EntitiesInitializing()
-        {        
-            var objs = FindObjectsOfType<EntityBase>();
+        {
+            EntityBase[] objs = FindObjectsOfType<EntityBase>();
             for (int i = 0; i < objs.Length; i++)
             {
                 if (objs[i].state.requireStarter)

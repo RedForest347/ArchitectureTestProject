@@ -16,6 +16,7 @@ public class TimerComponent : ComponentBase, ICustomUpdate, ICustomAwake
 
     public void OnAwake()
     {
+        //Debug.Log("OnAwake");
         ManagerUpdate.InstanceManagerUpdate.AddTo(this);
     }
 
@@ -43,6 +44,7 @@ public class TimerComponent : ComponentBase, ICustomUpdate, ICustomAwake
 
     public void CustomUpdate()
     {
+        //Debug.Log("CustomUpdate");
         count += Time.deltaTime;
     }
 }

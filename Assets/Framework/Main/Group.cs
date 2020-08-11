@@ -300,9 +300,27 @@ namespace RangerV
 
         public IEnumerator<int> GetEnumerator()
         {
-            foreach (EntContainer ent in EntitiesDictionary.Values)
+            EntContainer[] array = new EntContainer[EntitiesDictionary.Values.Count];
+            EntitiesDictionary.Values.CopyTo(array, 0);
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i].was_added)
+                {
+                    yield return array[i].entity;
+                }
+            }
+            //Debug.Log();
+            
+            /*foreach (EntContainer ent in EntitiesDictionary.Values)
                 if (ent.was_added)
-                    yield return ent.entity;
+                    yield return ent.entity;*/
+
+
+            /*for (int i = 0; i < EntitiesDictionary.Values.Count; i++)
+            {
+                Debug.Log(EntitiesDictionary.Values);
+            }*/
         }
 
         #endregion Equals/HashCode/Enumerator

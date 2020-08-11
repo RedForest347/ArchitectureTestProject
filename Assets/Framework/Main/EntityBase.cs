@@ -10,7 +10,7 @@ namespace RangerV
     /// </summary>
     public abstract class EntityBase : MonoBehaviour
     {
-        public static event Action<int> OnCreateEntity;
+        //public static event Action<int> OnCreateEntity;
         public static event Action<int> OnCreateEntityID;
 
         public static event Action<int> OnDestroyEntity;
@@ -96,12 +96,14 @@ namespace RangerV
         {
             state.runtime = true;
             CreateEntityID(this);
-            OnCreateEntity?.Invoke(entity);
+            //OnCreateEntity?.Invoke(entity);
 
             if (!Starter.initialized)
                 state.requireStarter = true;
             else
                 SetupAfterStarter();
+
+            //Debug.Log(gameObject.name + " Awake");
         }
 
         private void OnEnable()
@@ -116,7 +118,7 @@ namespace RangerV
 
             state.enabled = true;
             OnActivate();
-            Debug.Log("entity " + entity + " --active--");
+            //Debug.Log("entity " + entity + " --active--");
         }
 
         private void OnDisable()
@@ -135,7 +137,10 @@ namespace RangerV
         void OnActivate()
         {
             for (int i = 0; i < Components.Count; i++)
+            {
                 Storage.AddComponent(Components[i], entity);
+                //Debug.Log("    " + gameObject.name + " AddComponent " + Components[i].GetType());
+            }
             //Group.UpdateInGroups(entity);
             //OnCreateEntity(entity);
         }
@@ -163,6 +168,13 @@ namespace RangerV
             
             
             OnEnable();
+            //Debug.Log(gameObject.name + " have " + Components.Count + " Components");
+            for (int i = 0; i < Components.Count; i++)
+            {
+                if (Components[i] is ICustomAwake)
+                    ((ICustomAwake)Components[i]).OnAwake();
+                //Debug.Log("Component - " + Components[i].GetType() + ", is ICustomAwake - " + (Components[i] is ICustomAwake));
+            }
             Setup();
             state.initialized = true;
         }
@@ -204,18 +216,20 @@ namespace RangerV
 
             if (Storage.ContainsComponent(componentType, entity))
             {
-                Debug.LogError("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity);
-                return null; // или компонент, который уже существует
+                Debug.LogWarning("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity + " компонент добавлен не будет");
+                return null; // или компонент, который уже существует?
             }
 
             ComponentBase component = (ComponentBase)gameObject.AddComponent(componentType);
 
-            if ((component as ICustomAwake) != null)
-                (component as ICustomAwake).OnAwake();
+            if (component is ICustomAwake)
+                ((ICustomAwake)component).OnAwake();
+
+            //Debug.Log("Component - " + component.name + ", is ICustomAwake - " + (component is ICustomAwake));
 
             Components.Add(component);
             Storage.AddComponent(component, entity);
-            //Group.UpdateInGroups(entity);
+            
             return component;
         }
 

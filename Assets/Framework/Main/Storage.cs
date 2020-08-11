@@ -29,8 +29,8 @@ namespace RangerV
         /// <param name="ComponentType"></param>
         static void InitStorage(Type ComponentType)
         {
-            Debug.Log("true name = " + typeof(Storage<HealthComponent>));
-            Debug.Log("cur name = " + Type.GetType("RangerV.Storage`1[" + ComponentType + "]"));
+            //Debug.Log("true name = " + typeof(Storage<HealthComponent>));
+            //Debug.Log("cur name = " + Type.GetType("RangerV.Storage`1[" + ComponentType + "]"));
 
             Activator.CreateInstance(Type.GetType("RangerV.Storage`1[" + ComponentType + "]"));
         }
