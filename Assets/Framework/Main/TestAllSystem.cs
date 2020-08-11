@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using RangerV;
 using System;
-using System.Linq;
 using Stopwatch = System.Diagnostics.Stopwatch;
 
 public class TestAllSystem : MonoBehaviour
@@ -276,10 +275,10 @@ public class TestAllSystem : MonoBehaviour
 
         int dif = 100;
 
-        //test_time += TestContains(dif);
-        test_time += TestIEnumerator(dif * 100);
-        //test_time += TestAddRemoveComponent(dif);
-        //test_time += TestAddRemoveGroup(dif);
+        test_time += TestContains(dif);
+        test_time += TestIEnumerator(dif);
+        test_time += TestAddRemoveComponent(dif);
+        test_time += TestAddRemoveGroup(dif);
 
         for (int i = 0; i < gameObjects.Count; i++)
             Destroy(gameObjects[i]);
@@ -301,7 +300,11 @@ public class TestAllSystem : MonoBehaviour
                 }
             }
 
-            return time.ElapsedMilliseconds;
+            long total_time = time.ElapsedMilliseconds;
+
+            Debug.Log("Contains test complete for " + total_time + " ms");
+
+            return total_time;
         }
 
         long TestIEnumerator(int difficult)
@@ -319,7 +322,11 @@ public class TestAllSystem : MonoBehaviour
                 }
             }
 
-            return time.ElapsedMilliseconds;
+            long total_time = time.ElapsedMilliseconds;
+
+            Debug.Log("IEnumerator test complete for " + total_time + " ms");
+
+            return total_time;
         }
 
         long TestAddRemoveComponent(int difficult)
@@ -337,6 +344,7 @@ public class TestAllSystem : MonoBehaviour
             }
 
             long total_time = time.ElapsedMilliseconds;
+            Debug.Log("AddRemoveComponent test complete for " + total_time + " ms");
 
             Destroy(testObj);
 
@@ -365,12 +373,12 @@ public class TestAllSystem : MonoBehaviour
             }
 
             long total_time = time.ElapsedMilliseconds;
+            Debug.Log("AddRemoveGroup test complete for " + total_time + " ms");
 
             Destroy(testObj);
 
             return total_time;
         }
-
 
     }
 }

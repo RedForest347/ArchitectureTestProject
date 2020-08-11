@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using Stopwatch = System.Diagnostics.Stopwatch;
 using System.Linq;
 using UnityEngine;
-using System.Runtime.CompilerServices;
-
 
 namespace RangerV
 {
@@ -161,7 +159,7 @@ namespace RangerV
 
             for (int ent = 0; ent < length; ent++)
             {
-                EntitiesDictionary.Add(ent, new EntContainer());
+                EntitiesDictionary.Add(ent, EntContainer.Empty);
 
                 if (EntityBase.GetEntity(ent) != null)
                 {
@@ -200,7 +198,7 @@ namespace RangerV
             }
         }
 
-        void FinalEvents()
+        void FinalEvents() // куда нибудь запихнуть
         {
             EntityBase.OnCreateEntityID -= OnCreateNewEntityID;
 
@@ -300,27 +298,11 @@ namespace RangerV
 
         public IEnumerator<int> GetEnumerator()
         {
-            EntContainer[] array = new EntContainer[EntitiesDictionary.Values.Count];
-            EntitiesDictionary.Values.CopyTo(array, 0);
+            EntContainer[] array = EntitiesDictionary.Values.ToArray();
 
             for (int i = 0; i < array.Length; i++)
-            {
                 if (array[i].was_added)
-                {
                     yield return array[i].entity;
-                }
-            }
-            //Debug.Log();
-            
-            /*foreach (EntContainer ent in EntitiesDictionary.Values)
-                if (ent.was_added)
-                    yield return ent.entity;*/
-
-
-            /*for (int i = 0; i < EntitiesDictionary.Values.Count; i++)
-            {
-                Debug.Log(EntitiesDictionary.Values);
-            }*/
         }
 
         #endregion Equals/HashCode/Enumerator
@@ -334,7 +316,9 @@ namespace RangerV
             public bool was_added; // была ли сущность добавлена в группу
             int start_num_of_remains_components;
 
-            public EntContainer() : this(-1, -1) { }
+            public static EntContainer Empty { get => new EntContainer(); }
+
+            EntContainer() : this(-1, -1) { }
 
             public EntContainer(int entity, int num_of_components)
             {
@@ -361,6 +345,11 @@ namespace RangerV
                 remains_exceptions = 0;
                 entity = -1;
                 was_added = false;
+            }
+
+            public static explicit operator int(EntContainer container)
+            {
+                return container.entity;
             }
         }
     }

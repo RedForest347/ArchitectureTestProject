@@ -36,7 +36,12 @@ namespace RangerV
             return Entities[entity];
         }
 
-        //разобрать причинно-следственные связи
+        public static bool EntityExists(int entity)
+        {
+            return Entities[entity] != null;
+        }
+
+        //разобрать причинно-следственные связи //устарело
         /// <summary>
         /// ----------до----------
         /// 
@@ -95,26 +100,20 @@ namespace RangerV
         public void Awake()
         {
             state.runtime = true;
-            CreateEntityID(this);
-            //OnCreateEntity?.Invoke(entity);
+            CreateEntityID();
 
             if (!Starter.initialized)
                 state.requireStarter = true;
             else
                 SetupAfterStarter();
-
-            //Debug.Log(gameObject.name + " Awake");
         }
 
         private void OnEnable()
         {
-            
             if (state.requireStarter)
                 return;
             if (state.enabled)
                 return;
-
-            //Debug.Log("Enable " + entity);
 
             state.enabled = true;
             OnActivate();
@@ -136,13 +135,9 @@ namespace RangerV
 
         void OnActivate()
         {
+            Entities[entity] = this;
             for (int i = 0; i < Components.Count; i++)
-            {
                 Storage.AddComponent(Components[i], entity);
-                //Debug.Log("    " + gameObject.name + " AddComponent " + Components[i].GetType());
-            }
-            //Group.UpdateInGroups(entity);
-            //OnCreateEntity(entity);
         }
 
         public void OnDeactivate()
@@ -151,10 +146,8 @@ namespace RangerV
             state.enabled = false;
             ManagerUpdate.InstanceManagerUpdate.RemoveFrom(this);
             Storage.RemoveFromAllStorages(entity);
-            //Group.RemoveFromAllGroups(entity);
+            Entities[entity] = null;
         }
-
-        
 
 
         #region MAIN
@@ -163,35 +156,28 @@ namespace RangerV
         public void SetupAfterStarter()
         {
             state.requireStarter = false;
-            /*for (int i = 0; i < Components.Count; i++)
-                AddFromStartList(Components[i]);*/
-            
-            
             OnEnable();
-            //Debug.Log(gameObject.name + " have " + Components.Count + " Components");
+
             for (int i = 0; i < Components.Count; i++)
-            {
                 if (Components[i] is ICustomAwake)
                     ((ICustomAwake)Components[i]).OnAwake();
-                //Debug.Log("Component - " + Components[i].GetType() + ", is ICustomAwake - " + (Components[i] is ICustomAwake));
-            }
+
             Setup();
             state.initialized = true;
         }
 
-
-        void CreateEntityID(EntityBase entityBase)
+        void CreateEntityID()
         {
             if (Entities.Length <= nextMax)
                 Array.Resize(ref Entities, Entities.Length + 10);
 
             if (freeID.Count > 0)
-                entityBase.entity = freeID.Pop();
+                entity = freeID.Pop();
             else
-                entityBase.entity = nextMax++;
+                entity = nextMax++;
 
-            Entities[entityBase.entity] = entityBase;
-            OnCreateEntityID?.Invoke(entityBase.entity);
+            Entities[entity] = this;
+            OnCreateEntityID?.Invoke(entity);
         }
 
         #endregion MAIN
@@ -217,15 +203,13 @@ namespace RangerV
             if (Storage.ContainsComponent(componentType, entity))
             {
                 Debug.LogWarning("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity + " компонент добавлен не будет");
-                return null; // или компонент, который уже существует?
+                return null;
             }
 
             ComponentBase component = (ComponentBase)gameObject.AddComponent(componentType);
 
             if (component is ICustomAwake)
                 ((ICustomAwake)component).OnAwake();
-
-            //Debug.Log("Component - " + component.name + ", is ICustomAwake - " + (component is ICustomAwake));
 
             Components.Add(component);
             Storage.AddComponent(component, entity);
@@ -272,9 +256,7 @@ namespace RangerV
                 return false;
 
             Destroy(GetEntityComponent<T>());
-            
-            Storage.RemoveComponent<T>(entity); //багs?
-            
+            Storage.RemoveComponent<T>(entity);
             RemoveComponentFromLists(typeof(T));
             return true;
         }
@@ -289,7 +271,6 @@ namespace RangerV
 
             Destroy(GetEntityComponent(componentType));
             Storage.RemoveComponent(componentType, entity);
-            //Group.UpdateInGroups(entity);
             RemoveComponentFromLists(componentType);
             return true;
         }
