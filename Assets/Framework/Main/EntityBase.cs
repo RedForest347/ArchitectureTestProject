@@ -258,9 +258,9 @@ namespace RangerV
                 return false;
 
             Destroy(GetEntityComponent<T>());
-            //Storage<T>.StorageForType.Remove(entity);
-            Storage.RemoveComponent<T>(entity); //багs
-            //Group.UpdateInGroups(entity);
+            
+            Storage.RemoveComponent<T>(entity); //багs?
+            
             RemoveComponentFromLists(typeof(T));
             return true;
         }

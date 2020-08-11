@@ -25,7 +25,7 @@ namespace RangerV
 
         public static Group Create(ComponentsList Components, Action<int> OnAdd = null)
         {
-            return Create(Components, null, OnAdd/*new ComponentsList()*/);
+            return Create(Components, null, OnAdd);
         }
 
         /// <summary>
@@ -75,30 +75,6 @@ namespace RangerV
             return null;
         }
 
-        /*public static void RemoveFromAllGroups(int entity)
-        {
-            for (int i = 0; i < groups.Count; i++)
-                groups[i].RemoveEntity(entity);
-        }*/
-
-        static bool ShouldJoinToGroup(Group Group, int entity)
-        {
-            List<Type> Components = Group.GetComponentTypes();
-            List<Type> Exceptions = Group.GetExceptionTypes();
-
-            for (int i = 0; i < Exceptions.Count; i++)
-                if (EntityBase.GetEntity(entity).ContainsEntityComponent(Exceptions[i]))
-                    return false;
-
-            for (int i = 0; i < Components.Count; i++)
-                if (!EntityBase.GetEntity(entity).ContainsEntityComponent(Components[i]))
-                    return false;
-
-            return true;
-        }
-
-
-
         public static bool operator == (Group group1, Group group2)
         {
             if (group1 is null || group2 is null)
@@ -113,13 +89,9 @@ namespace RangerV
         }
 
 
-
         #endregion Static Func
 
 
-
-        //List<int> Entities;
-        //public int Entities_count { get => Entities.Count; }
         public int entities_count { get; private set; }
 
         Dictionary<int, EntContainer> EntitiesDictionary;
@@ -143,15 +115,9 @@ namespace RangerV
                 Debug.LogError("при создании группы, лист Exceptions пуст");
 
             EntitiesDictionary = new Dictionary<int, EntContainer>();
-
-            //Entities = new List<int>();
             entities_count = 0;
-
             this.Components = Components;
             this.Exceptions = Exceptions;
-
-            if (Components == null)
-                Debug.LogWarning("Components == null");
 
             for (int i = 0; i < Components.Count; i++)
                 hash_code_components += Components[i].GetHashCode();
@@ -189,7 +155,7 @@ namespace RangerV
             return exceptionsTypes;
         }
 
-        void InitDictionary() // переименовать на InitDictionary
+        void InitDictionary()
         {
             int length = EntityBase.entity_count;
 
@@ -238,9 +204,6 @@ namespace RangerV
         {
             EntityBase.OnCreateEntityID -= OnCreateNewEntityID;
 
-            if (Components == null)
-                Debug.Log("Components == null");
-
             for (int comp = 0; comp < Components.Count; comp++)
             {
                 Storage.GetStorage(Components[comp]).OnAdd -= OnAddComponent;
@@ -259,7 +222,6 @@ namespace RangerV
             if (!EntitiesDictionary.ContainsKey(entity))
             {
                 EntitiesDictionary.Add(entity, null);
-                //Debug.Log("в библиотеку " + GetHashCode() + " добавлена сущность " + entity);
             }
 
             EntContainer entContainer = new EntContainer(entity, Components.Count);
@@ -372,23 +334,16 @@ namespace RangerV
                 if (remains_exceptions < 0)
                     Debug.LogError("remains_exceptions меньше нуля " + remains_exceptions);
 
-
                 return remains_components == 0 && remains_exceptions == 0 && entity >= 0;
             }
 
             public void Zeroing()
-            {
-                Zeroing(-1);
-            }
-
-            public void Zeroing(int entity) // зачем?
             {
                 remains_components = start_num_of_remains_components;
                 remains_exceptions = 0;
                 entity = -1;
                 was_added = false;
             }
-
         }
     }
 

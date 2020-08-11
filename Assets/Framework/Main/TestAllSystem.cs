@@ -13,11 +13,6 @@ public class TestAllSystem : MonoBehaviour
     List<GameObject> gameObjects;
     List<Group> groups;
 
-    private void Awake()
-    {
-
-    }
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
@@ -244,7 +239,10 @@ public class TestAllSystem : MonoBehaviour
         #endregion DeleteGroups
 
         if (successfull)
+        {
             Debug.Log("тест закончен успешно за " + time.ElapsedMilliseconds + " ms");
+            StressTest();
+        }
         else
             Debug.LogError("тест закончен с ошибками за " + time.ElapsedMilliseconds + " ms");
 
@@ -257,10 +255,124 @@ public class TestAllSystem : MonoBehaviour
 
     void StressTest()
     {
+        long test_time = 0;
+        group1 = Group.Create(new ComponentsList<CompTest1, CompTest2, CompTest3, CompTest4, CompTest5, CompTest6>());
+        group2 = Group.Create(new ComponentsList<CompTest1, CompTest2>(), new ComponentsList<CompTest3, CompTest4, CompTest5, CompTest6>());
+
+        groups = new List<Group> { group1, group2 };
+        gameObjects = new List<GameObject>();
+
+
+        for (int i = 0; i < 10; i++)
+        {
+            gameObjects.Add(new GameObject());
+        }
+
+        Debug.LogWarning("начат тест производительности фреймворка");
+        //Stopwatch time = Stopwatch.StartNew();
+
+        foreach (GameObject obj in gameObjects)
+            obj.AddComponent<TestEntity3>();
+
+        int dif = 100;
+
+        test_time += TestContains(dif);
+        test_time += TestIEnumerator(dif);
+        test_time += TestAddRemoveComponent(dif);
+        test_time += TestAddRemoveGroup(dif);
+
+        for (int i = 0; i < gameObjects.Count; i++)
+            Destroy(gameObjects[i]);
+
+        Debug.Log("Тест закончен за " + test_time + " ms");
+
+        long TestContains(int difficult)
+        {
+            Stopwatch time = Stopwatch.StartNew();
+
+            for (int i = 0; i < difficult; i++) // тест на Contains
+            {
+                foreach (Group group in groups)
+                {
+                    foreach (int ent in group)
+                    {
+                        group.Contains(ent);
+                    }
+                }
+            }
+
+            return time.ElapsedMilliseconds;
+        }
+
+        long TestIEnumerator(int difficult)
+        {
+            Stopwatch time = Stopwatch.StartNew();
+
+            for (int i = 0; i < difficult * 100; i++)
+            {
+                foreach (Group group in groups)
+                {
+                    foreach (int ent in group)
+                    {
+                        ;
+                    }
+                }
+            }
+
+            return time.ElapsedMilliseconds;
+        }
+
+        long TestAddRemoveComponent(int difficult)
+        {
+            GameObject testObj = new GameObject();
+
+            Stopwatch time = Stopwatch.StartNew();
+            testObj.AddComponent<TestEntity4>();
+            EntityBase entityBase = testObj.GetComponent<EntityBase>();
+
+            for (int i = 0; i < difficult * 10; i++)
+            {
+                entityBase.RemoveComponent<CompTest1>();
+                entityBase.Add<CompTest1>();
+            }
+
+            long total_time = time.ElapsedMilliseconds;
+
+            Destroy(testObj);
+
+            return total_time;
+        }
+
+        long TestAddRemoveGroup(int difficult)
+        {
+            GameObject testObj = new GameObject();
+
+            Stopwatch time = Stopwatch.StartNew();
+            testObj.AddComponent<TestEntity4>();
+            EntityBase entityBase = testObj.GetComponent<EntityBase>();
+
+            for (int i = 0; i < difficult * 5; i++)
+            {
+                entityBase.RemoveComponent<CompTest3>();
+                entityBase.RemoveComponent<CompTest4>();
+                entityBase.RemoveComponent<CompTest5>();
+                entityBase.RemoveComponent<CompTest6>();
+
+                entityBase.Add<CompTest3>();
+                entityBase.Add<CompTest4>();
+                entityBase.Add<CompTest5>();
+                entityBase.Add<CompTest6>();
+            }
+
+            long total_time = time.ElapsedMilliseconds;
+
+            Destroy(testObj);
+
+            return total_time;
+        }
+
 
     }
-
-    
 }
 
 [Serializable]
@@ -330,10 +442,6 @@ public class TestEntity1 : EntityBase
 {
     public override void Setup()
     {
-        //Components.Add();
-        //Add_InEditorMode(typeof(CompTest1));
-        //Add_InEditorMode(typeof(CompTest1));
-        //Add_InEditorMode(typeof(CompTest1));
         Add<CompTest1>();
         Add<CompTest1>();
         Add<CompTest1>();
@@ -360,6 +468,20 @@ public class TestEntity3 : EntityBase
         Add<CompTest2>();
         Add<CompTest3>();
         Add<CompTest4>();
+    }
+}
+
+public class TestEntity4 : EntityBase
+{
+    public override void Setup()
+    {
+        Add<CompTest1>();
+        Add<CompTest2>();
+        Add<CompTest3>();
+        Add<CompTest4>();
+        Add<CompTest5>();
+        Add<CompTest6>();
+        Add<CompTest7>();
     }
 }
 
