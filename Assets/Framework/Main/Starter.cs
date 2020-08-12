@@ -22,7 +22,8 @@ namespace RangerV
 
         private void Awake()
         {
-            //Storage.CleanStorage();
+            Debug.Log("Starter Awake");
+
 
             ManagerUpdate.Create();
             StarterSetup();
@@ -31,6 +32,21 @@ namespace RangerV
 
             EntitiesInitializing();
             GlobalSystemStorage.InstanceGSS.StartProcessings();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                Debug.Log("Was Update");
+
+                for (int i = 0; i < EntityBase.entity_count; i++)
+                {
+                    if (EntityBase.EntityExists(i))
+                        Debug.Log("сущность " + i + " существует");
+                }
+
+            }
         }
 
         void EntitiesInitializing()

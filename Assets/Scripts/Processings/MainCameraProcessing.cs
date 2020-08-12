@@ -22,7 +22,7 @@ public class MainCameraProcessing : ProcessingBase, ICustomAwake, ICustomUpdate,
         }
     }
 
-    public void CustomFixedUpdate()      //FixedUpdateUpdate
+    public void CustomFixedUpdate()      //FixedUpdate
     {
         
     }

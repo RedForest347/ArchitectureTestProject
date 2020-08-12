@@ -82,6 +82,7 @@
     <Compile Include="Assets\Framework\Main\Group.cs" />
     <Compile Include="Assets\Framework\Main\Interfaces.cs" />
     <Compile Include="Assets\Framework\Main\ProcessingBase.cs" />
+    <Compile Include="Assets\Framework\Main\Singleton.cs" />
     <Compile Include="Assets\Framework\Main\Starter.cs" />
     <Compile Include="Assets\Framework\Main\Storage.cs" />
     <Compile Include="Assets\Framework\Main\TestAllSystem.cs" />

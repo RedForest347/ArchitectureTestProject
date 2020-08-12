@@ -122,7 +122,9 @@ namespace RangerV
 
         private void OnDisable()
         {
+            Debug.Log("Disable");
             OnDeactivate();
+
         }
 
         private void OnDestroy()
@@ -144,7 +146,7 @@ namespace RangerV
         {
             OnDestroyEntity?.Invoke(entity);
             state.enabled = false;
-            ManagerUpdate.InstanceManagerUpdate.RemoveFrom(this);
+            ManagerUpdate.Instance.RemoveFrom(this);
             Storage.RemoveFromAllStorages(entity);
             Entities[entity] = null;
         }

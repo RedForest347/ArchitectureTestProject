@@ -18,7 +18,7 @@ namespace RangerV
 
             if (processing is ICustomAwake)
                 (processing as ICustomAwake).OnAwake();   
-            ManagerUpdate.InstanceManagerUpdate.AddTo(processing);
+            ManagerUpdate.Instance.AddTo(processing);
 
             return processing;
         }

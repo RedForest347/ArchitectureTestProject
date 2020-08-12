@@ -29,21 +29,8 @@ namespace RangerV
         /// <param name="ComponentType"></param>
         static void InitStorage(Type ComponentType)
         {
-            //Debug.Log("true name = " + typeof(Storage<HealthComponent>));
-            //Debug.Log("cur name = " + Type.GetType("RangerV.Storage`1[" + ComponentType + "]"));
-
             Activator.CreateInstance(Type.GetType("RangerV.Storage`1[" + ComponentType + "]"));
         }
-
-        /// <summary>
-        /// функция нужна для проверки наличия компонента в StorageDictionary и, при его отсутствии, инициализации Storage<> для данного типа компонентов
-        /// </summary>
-        /*static Storage GetStorage(Type componentType)
-        {
-            if (!StorageDictionary.ContainsKey(componentType))
-                InitStorage(componentType);
-            return StorageDictionary[componentType];
-        }*/
 
         public static T GetComponent<T>(int entity) where T : ComponentBase, IComponent, new()
         {
@@ -93,15 +80,11 @@ namespace RangerV
             return StorageDictionary[componentBase.GetType()].Add(componentBase, entity);
         }
 
-        /*public static void AddToAllStorages(List<ComponentBase> Components, int entity)
-        {
-            for (int i = 0; i < Components.Count; i++)
-                GetStorage(Components[i].GetType()).Add(Components[i], entity);
-        }*/
-
         public static void Init<T>() where T : ComponentBase, IComponent, new()
         {
-            Storage<T>.Nothing();
+            //Storage<T>.Nothing();
+            // если возникнут проблемы, следует раскомментировать, но вроде все норм
+
         }
 
         public static void RemoveFromAllStorages(int entity)
