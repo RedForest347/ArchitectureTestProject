@@ -15,26 +15,46 @@ namespace RangerV
     //
     //
 
-
     public class Starter : MonoBehaviour        
     {
         public static bool initialized;
 
         private void Awake()
         {
-            Debug.Log("Starter Awake");
 
-
-            ManagerUpdate.Create();
+            ManagerUpdate.Init();
+            GlobalSystemStorage.Init();
             StarterSetup();
             initialized = true;
             Debug.Log("initialized:   " + initialized);
 
             EntitiesInitializing();
-            GlobalSystemStorage.InstanceGSS.StartProcessings();
+            GlobalSystemStorage.Instance.StartProcessings();
         }
 
-        private void Update()
+        private void OnEnable()
+        {
+            if (!initialized)
+            {
+                Debug.LogWarning("EntitiesInitializing повторно");
+                ReInitialisation();
+            }
+        }
+
+        void ReInitialisation() // происходит при реблде
+        {
+            ManagerUpdate.Init();
+            GlobalSystemStorage.Init();
+            StarterSetup();
+            initialized = true;
+            Group.UpdateAllGroups();
+            Debug.Log("Re initialized:   " + initialized);
+
+            //EntitiesInitializing();
+        }
+
+        
+        private void Update() // потом убрать
         {
             if (Input.GetKeyDown(KeyCode.N))
             {
@@ -46,6 +66,9 @@ namespace RangerV
                         Debug.Log("сущность " + i + " существует");
                 }
 
+                Debug.Log("InstanceProcessings.Count = " + GlobalSystemStorage.Instance.InstanceProcessings.Count);
+                Debug.Log("groups.Count = " + Group.groups.Count);
+                //Debug.Log("groups.hachcode = " + Group.groups[0].hash_code_components);
             }
         }
 

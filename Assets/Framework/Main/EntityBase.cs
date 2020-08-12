@@ -5,25 +5,38 @@ using System.Linq;
 
 namespace RangerV
 {
+
+    /// <summary>
+    /// костыль. его суть - хранить статическую дату для  EntityBase в нестатическом виде для нормального
+    /// восстановления после ребилдинга. хорошо бы переделать в более правильный вид
+    /// </summary>
+    public class EntityBaseStatic : MonoBehaviour
+    {
+        protected static EntityBaseStatic Instance { get => Singleton<EntityBaseStatic>.Instance; }
+
+        public EntityBase[] Entities; //сделать расширение массива при ребилде
+        public Stack<int> freeID = new Stack<int>(25);
+        public int nextMax = 1;
+    }
+
     /// <summary>
     /// Базовый класс Entity
     /// </summary>
-    public abstract class EntityBase : MonoBehaviour
+    public abstract class EntityBase : EntityBaseStatic
     {
-        //public static event Action<int> OnCreateEntity;
         public static event Action<int> OnCreateEntityID;
-
         public static event Action<int> OnDestroyEntity;
-        
+        public static event Action<int> OnActivateEntity;
 
+        new static EntityBase[] Entities { get => Instance.Entities; }
+        new static Stack<int> freeID { get => Instance.freeID; }
+        new static int nextMax { get => Instance.nextMax; set => Instance.nextMax = value; } 
 
         /// <summary>
         /// нулевой элемент не должен быть занят
         /// </summary>
-        static EntityBase[] Entities = new EntityBase[50];
-        static Stack<int> freeID = new Stack<int>(25);
-        static int nextMax = 1;
-        public static int entity_count { get => nextMax; }
+
+        public static int entity_count { get => Instance.nextMax; }
 
         public int entity;
 
@@ -99,6 +112,7 @@ namespace RangerV
         /// </summary>
         public void Awake()
         {
+            //Debug.Log("Awake");
             state.runtime = true;
             CreateEntityID();
 
@@ -110,21 +124,34 @@ namespace RangerV
 
         private void OnEnable()
         {
+            //Debug.Log("requireStarter = " + state.requireStarter + " enabled = " + state.enabled);
             if (state.requireStarter)
                 return;
             if (state.enabled)
                 return;
 
             state.enabled = true;
-            OnActivate();
-            //Debug.Log("entity " + entity + " --active--");
+
+            Entities[entity] = this;
+
+            for (int i = 0; i < Components.Count; i++)
+            {
+                if (Components[i] is ICustomAwake)
+                    ((ICustomAwake)Components[i]).OnAwake();
+
+                ManagerUpdate.Instance.AddTo(Components[i]);
+                Storage.AddComponent(Components[i], entity);
+            }
+
+            OnActivateEntity?.Invoke(entity);
+
+            //Debug.Log("entity " + entity + " (" + gameObject.GetInstanceID() + ") --Activate--"); 
         }
 
         private void OnDisable()
         {
-            Debug.Log("Disable");
+            //Debug.Log("Disable");
             OnDeactivate();
-
         }
 
         private void OnDestroy()
@@ -135,13 +162,6 @@ namespace RangerV
             entity = -1;
         }
 
-        void OnActivate()
-        {
-            Entities[entity] = this;
-            for (int i = 0; i < Components.Count; i++)
-                Storage.AddComponent(Components[i], entity);
-        }
-
         public void OnDeactivate()
         {
             OnDestroyEntity?.Invoke(entity);
@@ -149,6 +169,7 @@ namespace RangerV
             ManagerUpdate.Instance.RemoveFrom(this);
             Storage.RemoveFromAllStorages(entity);
             Entities[entity] = null;
+            Debug.Log("entity " + entity + " (" + gameObject.GetInstanceID() + ") --Deactivate--");
         }
 
 
@@ -159,11 +180,6 @@ namespace RangerV
         {
             state.requireStarter = false;
             OnEnable();
-
-            for (int i = 0; i < Components.Count; i++)
-                if (Components[i] is ICustomAwake)
-                    ((ICustomAwake)Components[i]).OnAwake();
-
             Setup();
             state.initialized = true;
         }
@@ -171,7 +187,7 @@ namespace RangerV
         void CreateEntityID()
         {
             if (Entities.Length <= nextMax)
-                Array.Resize(ref Entities, Entities.Length + 10);
+                Array.Resize(ref Instance.Entities, Entities.Length + 10);
 
             if (freeID.Count > 0)
                 entity = freeID.Pop();
@@ -213,6 +229,8 @@ namespace RangerV
             if (component is ICustomAwake)
                 ((ICustomAwake)component).OnAwake();
 
+            ManagerUpdate.Instance.AddTo(component);
+
             Components.Add(component);
             Storage.AddComponent(component, entity);
             
@@ -235,18 +253,6 @@ namespace RangerV
             ComponentBase _component = (ComponentBase)gameObject.AddComponent(componentType);
             Components.Add(_component);
             return _component;
-        }
-
-
-        void AddFromStartList(ComponentBase component)
-        {
-            if (Storage.ContainsComponent(component.GetType(), entity))
-                return;
-
-            if ((component as ICustomAwake) != null)
-                (component as ICustomAwake).OnAwake();
-
-            Storage.AddComponent(component, entity);
         }
 
         public bool RemoveComponent<T>() where T : ComponentBase, IComponent, new()
@@ -310,7 +316,7 @@ namespace RangerV
             return -1;
         }
 
-        #endregion
+        #endregion ADD/REMOVE
 
         #region GetComponent
 

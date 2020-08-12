@@ -5,16 +5,22 @@ using UnityEngine;
 
 namespace RangerV
 {
-    public class GlobalSystemStorage
+    public class GlobalSystemStorage : MonoBehaviour
     {
-        public static GlobalSystemStorage InstanceGSS = new GlobalSystemStorage();
-        Dictionary<Type, ProcessingBase> InstanceProcessings = new Dictionary<Type, ProcessingBase>();
+        public static GlobalSystemStorage Instance { get => Singleton<GlobalSystemStorage>.Instance; }
+        public Dictionary<Type, ProcessingBase> InstanceProcessings;
 
+
+        public static void Init()
+        {
+            Instance.InstanceProcessings = new Dictionary<Type, ProcessingBase>();
+            Debug.LogWarning("GlobalSystemStorage Init");
+        }
 
         public static T Add<T>() where T : ProcessingBase, new()
         {
             T processing = new T();
-            InstanceGSS.InstanceProcessings.Add(typeof(T), processing);
+            Instance.InstanceProcessings.Add(typeof(T), processing);
 
             if (processing is ICustomAwake)
                 (processing as ICustomAwake).OnAwake();   
@@ -26,16 +32,9 @@ namespace RangerV
         public static T Get<T>() where T : ProcessingBase
         {
             ProcessingBase resolve;
-            InstanceGSS.InstanceProcessings.TryGetValue(typeof(T), out resolve);
+            Instance.InstanceProcessings.TryGetValue(typeof(T), out resolve);
             return (T)resolve;
         }
-
-        //public static bool TryGet(Type t, out object resolve)
-        //{
-        //    bool b;
-        //    b = InstanceGSS.InstanceProcessings.TryGetValue(t, out resolve);
-        //    return b;
-        //}
 
         public void StartProcessings()
         {

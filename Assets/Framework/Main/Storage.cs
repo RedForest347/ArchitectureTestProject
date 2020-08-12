@@ -199,9 +199,11 @@ namespace RangerV
             if (!entityData[entity].have_component)
                 return;
 
-            OnRemove?.Invoke(entity);
 
+            UnityEngine.Object.Destroy(entityData[entity].component);
             entityData[entity].SetDefault();
+
+            OnRemove?.Invoke(entity);
         }
     }
 }

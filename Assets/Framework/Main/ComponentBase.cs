@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace RangerV
 {
+    /// <summary>
+    /// для компонентов стоит применять интерфейс IAwake для инициализации необходимых данных.
+    /// добавление компонента в ManagerUpdate производится в EntityBase при создании и добавлении
+    /// компонента к сущности.
+    /// </summary>
     [System.Serializable]
     public class ComponentBase: MonoBehaviour, IComponent
     {

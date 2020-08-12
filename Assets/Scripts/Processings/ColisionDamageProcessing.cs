@@ -14,6 +14,7 @@ public class ColisionDamageProcessing : ProcessingBase, ICustomUpdate, ICustomSt
         {
             Storage.GetComponent<CollisionComponent>(entity).AddOnTriggerAction(GiveDamage, CollisionActionType.Enter, GameObject.Find("EaglePlayer").GetComponent<Collider>());
         }*/
+        Debug.Log("OnStart");
         collision_group.OnAddEntity += DDD;
     }
     void DDD(int entity)

@@ -16,8 +16,7 @@ public class TimerComponent : ComponentBase, ICustomUpdate, ICustomAwake
 
     public void OnAwake()
     {
-        //Debug.Log("OnAwake");
-        ManagerUpdate.Instance.AddTo(this);
+        //ManagerUpdate.Instance.AddTo(this);
     }
 
     public void StratTimer(float time)

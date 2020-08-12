@@ -19,12 +19,13 @@ namespace RangerV
 
         #region Static Func
 
-        static List<Group> groups = new List<Group>();
+        public static List<Group> groups = new List<Group>(); // убрать public
 
         public static Group Create(ComponentsList Components, Action<int> OnAdd = null)
         {
             return Create(Components, null, OnAdd);
         }
+
 
         /// <summary>
         /// подразумевается, что Components и Exceptions будут созданы с помощью new ComponentsList<>()
@@ -62,6 +63,14 @@ namespace RangerV
             groups.Add(group);
 
             return group;
+        }
+
+        public static void UpdateAllGroups()
+        {
+            for (int i = 0; i < groups.Count; i++)
+            {
+                groups[i].InitDictionary();
+            }
         }
 
         static Group GetExistGroup(Group group)
@@ -112,7 +121,7 @@ namespace RangerV
             if (Exceptions == null)
                 Debug.LogError("при создании группы, лист Exceptions пуст");
 
-            EntitiesDictionary = new Dictionary<int, EntContainer>();
+            //EntitiesDictionary = new Dictionary<int, EntContainer>();
             entities_count = 0;
             this.Components = Components;
             this.Exceptions = Exceptions;
@@ -157,6 +166,10 @@ namespace RangerV
         {
             int length = EntityBase.entity_count;
 
+            //Debug.Log("entity_count = " + EntityBase.entity_count);
+
+            EntitiesDictionary = new Dictionary<int, EntContainer>();
+
             for (int ent = 0; ent < length; ent++)
             {
                 EntitiesDictionary.Add(ent, EntContainer.Empty);
@@ -200,6 +213,9 @@ namespace RangerV
 
         void FinalEvents() // куда нибудь запихнуть
         {
+            if (Components == null)
+                return;
+
             EntityBase.OnCreateEntityID -= OnCreateNewEntityID;
 
             for (int comp = 0; comp < Components.Count; comp++)
@@ -250,6 +266,14 @@ namespace RangerV
         }
         void OnRemoveComponent(int ent)
         {
+            /*Debug.Log("EntitiesDictionary (" + (hash_code_components % 256) + ") contains: ");
+            foreach (var item in EntitiesDictionary.Values)
+            {
+                Debug.Log(item.entity);
+            }
+
+            Debug.Log("end");*/
+
             EntitiesDictionary[ent].remains_components++;
 
             if (EntitiesDictionary[ent].was_added)
@@ -302,13 +326,13 @@ namespace RangerV
 
             for (int i = 0; i < array.Length; i++)
                 if (array[i].was_added)
-                    yield return array[i].entity;
+                    yield return array[i].entity; 
         }
 
         #endregion Equals/HashCode/Enumerator
 
 
-        class EntContainer
+        class EntContainer 
         {
             public int remains_components; // сколько компонентов осталось до полного набора
             public int remains_exceptions; // сколько осталось лишних исключений
@@ -318,7 +342,7 @@ namespace RangerV
 
             public static EntContainer Empty { get => new EntContainer(); }
 
-            EntContainer() : this(-1, -1) { }
+            EntContainer() : this(-2, -2) { }
 
             public EntContainer(int entity, int num_of_components)
             {

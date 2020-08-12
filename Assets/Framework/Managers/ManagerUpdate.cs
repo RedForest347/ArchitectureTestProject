@@ -13,11 +13,8 @@ namespace RangerV
 
         public static ManagerUpdate Instance { get => Singleton<ManagerUpdate>.Instance; }
 
-        public static void Create()
+        public static void Init()
         {
-            //InstanceManagerUpdate = GameObject.Find("[SETUP]").AddComponent<ManagerUpdate>();
-            //InstanceManagerUpdate.GetType();
-            //Debug.Log("ManagerUpdate instantiated");
 
         }
 
