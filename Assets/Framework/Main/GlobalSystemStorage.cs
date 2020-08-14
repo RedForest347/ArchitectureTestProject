@@ -14,12 +14,12 @@ namespace RangerV
         public static void Init()
         {
             Instance.InstanceProcessings = new Dictionary<Type, ProcessingBase>();
-            Debug.LogWarning("GlobalSystemStorage Init");
+            //Debug.LogWarning("GlobalSystemStorage Init");
         }
 
         public static T Add<T>() where T : ProcessingBase, new()
         {
-            T processing = new T();
+            T processing = new T(); 
             Instance.InstanceProcessings.Add(typeof(T), processing);
 
             if (processing is ICustomAwake)

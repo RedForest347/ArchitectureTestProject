@@ -124,6 +124,7 @@ namespace RangerV
 
         private void OnEnable()
         {
+            Debug.Log("EntityBase Enable");
             //Debug.Log("requireStarter = " + state.requireStarter + " enabled = " + state.enabled);
             if (state.requireStarter)
                 return;
@@ -169,7 +170,7 @@ namespace RangerV
             ManagerUpdate.Instance.RemoveFrom(this);
             Storage.RemoveFromAllStorages(entity);
             Entities[entity] = null;
-            Debug.Log("entity " + entity + " (" + gameObject.GetInstanceID() + ") --Deactivate--");
+            //Debug.Log("entity " + entity + " (" + gameObject.GetInstanceID() + ") --Deactivate--");
         }
 
 

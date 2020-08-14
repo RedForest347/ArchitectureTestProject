@@ -2,9 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace RangerV
 {
+    class Some2
+    {
+        static Some2()
+        {
+            Debug.Log("static конструктор 2");
+        }
+        public Some2()
+        {
+            //new GameObject("DDD");
+            Debug.LogWarning(" isEditor = " + Application.isEditor/* + " genuine? = " + Application.genuine + "  " */);
+            Debug.Log("конструктор 2");
+        }
+    }
+
     // В Starter выполняется главный Awake сцены. В Awake сначала создается ManagerUpdate, после происходит добавление processing'ов в GSS словарь
     // (происходит это в StarterSetup, переопределенном в специальном классе унаследованном от Starter). 
     // При добавлении в GSS словарь, на processing"е выполняется метод OnAwake (при наличии интерфейса IAwake).
@@ -19,9 +34,16 @@ namespace RangerV
     {
         public static bool initialized;
 
+        Some2 some2 = new Some2();
+
+        static Starter()
+        {
+            Debug.LogWarning(/*"isPlaying = " + Application.isPlaying + */" isEditor = " + Application.isEditor/* + " genuine? = " + Application.genuine + "  " */);
+            Debug.Log("static starter");
+        }
+
         private void Awake()
         {
-
             ManagerUpdate.Init();
             GlobalSystemStorage.Init();
             StarterSetup();
@@ -34,11 +56,14 @@ namespace RangerV
 
         private void OnEnable()
         {
+            Debug.Log("Starter Enable");
             if (!initialized)
             {
                 Debug.LogWarning("EntitiesInitializing повторно");
                 ReInitialisation();
             }
+
+            
         }
 
         void ReInitialisation() // происходит при реблде
@@ -48,9 +73,8 @@ namespace RangerV
             StarterSetup();
             initialized = true;
             Group.UpdateAllGroups();
-            Debug.Log("Re initialized:   " + initialized);
-
-            //EntitiesInitializing();
+            Debug.LogWarning("Ребилд еще не доделан, некоторые функции могут не работать/работать некорректно");
+            //Debug.Log("Re initialized:   " + initialized);
         }
 
         
