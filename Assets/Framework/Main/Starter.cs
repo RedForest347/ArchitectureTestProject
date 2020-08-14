@@ -34,13 +34,13 @@ namespace RangerV
     {
         public static bool initialized;
 
-        Some2 some2 = new Some2();
+        //Some2 some2 = new Some2();
 
-        static Starter()
-        {
-            Debug.LogWarning(/*"isPlaying = " + Application.isPlaying + */" isEditor = " + Application.isEditor/* + " genuine? = " + Application.genuine + "  " */);
-            Debug.Log("static starter");
-        }
+        //static Starter()
+        //{
+        //    Debug.LogWarning(/*"isPlaying = " + Application.isPlaying + */" isEditor = " + Application.isEditor/* + " genuine? = " + Application.genuine + "  " */);
+        //    Debug.Log("static starter");
+        //}
 
         private void Awake()
         {

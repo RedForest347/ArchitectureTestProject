@@ -196,7 +196,8 @@ namespace RangerV
 
         void InitEvents()
         {
-            EntityBase.OnCreateEntityID += OnCreateNewEntityID;
+            EntityBase.OnBeforeAddComponents += OnCreateNewEntityID;
+
 
             for (int comp = 0; comp < Components.Count; comp++)
             {
@@ -359,6 +360,7 @@ namespace RangerV
                     Debug.LogError("remains_components меньше нуля " + remains_components);
                 if (remains_exceptions < 0)
                     Debug.LogError("remains_exceptions меньше нуля " + remains_exceptions);
+
 
                 return remains_components == 0 && remains_exceptions == 0 && entity >= 0;
             }

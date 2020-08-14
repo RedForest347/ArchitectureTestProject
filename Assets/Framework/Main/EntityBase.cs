@@ -5,38 +5,26 @@ using System.Linq;
 
 namespace RangerV
 {
-
-    /// <summary>
-    /// костыль. его суть - хранить статическую дату для  EntityBase в нестатическом виде для нормального
-    /// восстановления после ребилдинга. хорошо бы переделать в более правильный вид
-    /// </summary>
-    public class EntityBaseStatic : MonoBehaviour
-    {
-        protected static EntityBaseStatic Instance { get => Singleton<EntityBaseStatic>.Instance; }
-
-        public EntityBase[] Entities; //сделать расширение массива при ребилде
-        public Stack<int> freeID = new Stack<int>(25);
-        public int nextMax = 1;
-    }
-
     /// <summary>
     /// Базовый класс Entity
     /// </summary>
-    public abstract class EntityBase : EntityBaseStatic
+    public abstract class EntityBase : MonoBehaviour
     {
         public static event Action<int> OnCreateEntityID;
+        public static event Action<int> OnBeforeAddComponents;
         public static event Action<int> OnDestroyEntity;
         public static event Action<int> OnActivateEntity;
 
-        new static EntityBase[] Entities { get => Instance.Entities; }
-        new static Stack<int> freeID { get => Instance.freeID; }
-        new static int nextMax { get => Instance.nextMax; set => Instance.nextMax = value; } 
+
+        static EntityBase[] Entities { get => EntityBaseData.Instance.Entities; }
+        static Stack<int> freeID { get => EntityBaseData.Instance.freeID; }
+        static int nextMax { get => EntityBaseData.Instance.nextMax; set => EntityBaseData.Instance.nextMax = value; } 
 
         /// <summary>
         /// нулевой элемент не должен быть занят
         /// </summary>
 
-        public static int entity_count { get => Instance.nextMax; }
+        public static int entity_count { get => EntityBaseData.Instance.nextMax; }
 
         public int entity;
 
@@ -124,7 +112,7 @@ namespace RangerV
 
         private void OnEnable()
         {
-            Debug.Log("EntityBase Enable");
+            //Debug.Log("EntityBase Enable");
             //Debug.Log("requireStarter = " + state.requireStarter + " enabled = " + state.enabled);
             if (state.requireStarter)
                 return;
@@ -133,7 +121,10 @@ namespace RangerV
 
             state.enabled = true;
 
+            //Debug.Log("Length = " + Entities.Length + " nextMax = " + nextMax + " freeID.Count = " + freeID.Count); 
             Entities[entity] = this;
+
+            OnBeforeAddComponents?.Invoke(entity);
 
             for (int i = 0; i < Components.Count; i++)
             {
@@ -188,7 +179,7 @@ namespace RangerV
         void CreateEntityID()
         {
             if (Entities.Length <= nextMax)
-                Array.Resize(ref Instance.Entities, Entities.Length + 10);
+                Array.Resize(ref EntityBaseData.Instance.Entities, Entities.Length + 10);
 
             if (freeID.Count > 0)
                 entity = freeID.Pop();
@@ -355,5 +346,28 @@ namespace RangerV
 
         public virtual void Setup() { }
 
+
+
+
+    }
+
+    /// <summary>
+    /// костыль. его суть - хранить статическую дату для  EntityBase в нестатическом виде для нормального
+    /// восстановления после ребилдинга. хорошо бы переделать в более правильный вид
+    /// </summary>
+    public class EntityBaseData : MonoBehaviour
+    {
+        public static EntityBaseData Instance { get => Singleton<EntityBaseData>.Instance; }
+
+        public EntityBase[] Entities;
+        public Stack<int> freeID;
+        public int nextMax;
+
+        EntityBaseData()
+        {
+            Entities = new EntityBase[10];
+            nextMax = 1;
+            freeID = new Stack<int>(25);
+        }
     }
 }
