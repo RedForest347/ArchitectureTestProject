@@ -124,6 +124,7 @@
     <Compile Include="Assets\Scripts\SubComponents\ControlSettings.cs" />
     <Compile Include="Assets\World\Textures\Skyboxes\StarFonScript.cs" />
     <None Include="Assets\World\Textures\Skyboxes\StarFonShader.shader" />
+    <None Include="Assets\Планы на ближайшее будущее.txt" />
     <None Include="Assets\World\Textures\Skyboxes\old\StarFon.shader" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>D:/Unity/архитектура/branch/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

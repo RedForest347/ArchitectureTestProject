@@ -121,7 +121,6 @@ namespace RangerV
             if (Exceptions == null)
                 Debug.LogError("при создании группы, лист Exceptions пуст");
 
-            //EntitiesDictionary = new Dictionary<int, EntContainer>();
             entities_count = 0;
             this.Components = Components;
             this.Exceptions = Exceptions;
@@ -136,8 +135,9 @@ namespace RangerV
         {
             EntitiesDictionary[entity].was_added = true;
             entities_count++;
+            //Debug.Log("OnAddEntity");
             OnAddEntity?.Invoke(entity);
-        }
+        } 
 
         void RemoveEntity(int entity)
         {
@@ -165,8 +165,6 @@ namespace RangerV
         void InitDictionary()
         {
             int length = EntityBase.entity_count;
-
-            //Debug.Log("entity_count = " + EntityBase.entity_count);
 
             EntitiesDictionary = new Dictionary<int, EntContainer>();
 
@@ -243,11 +241,19 @@ namespace RangerV
 
             for (int comp = 0; comp < Components.Count; comp++)
                 if (Storage.ContainsComponent(Components[comp], entity))
+                {
+                    Debug.LogWarning("При добавлении сущности в группу, на ней не должны находится компоненты, " +
+                        "по идее. сейчас находятся. работа продолжится в штатном режиме");
                     entContainer.remains_components--;
+                }
 
             for (int exc = 0; exc < Exceptions.Count; exc++)
                 if (Storage.ContainsComponent(Exceptions[exc], entity))
+                {
+                    Debug.LogWarning("При добавлении сущности в группу, на ней не должны находится компоненты, " +
+                        "по идее. сейчас находятся. работа продолжится в штатном режиме");
                     entContainer.remains_exceptions++;
+                }
 
             EntitiesDictionary[entity] = entContainer;
 
@@ -398,7 +404,7 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
+            //Storage.Init<T1>();
             types = new List<Type>
             {
                 typeof(T1)
@@ -412,8 +418,8 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
+            //Storage.Init<T1>();
+            //Storage.Init<T2>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -429,9 +435,9 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
-            Storage.Init<T3>();
+            //Storage.Init<T1>();
+            //Storage.Init<T2>();
+            //Storage.Init<T3>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -449,10 +455,10 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
-            Storage.Init<T3>();
-            Storage.Init<T4>();
+            //Storage.Init<T1>();
+            //Storage.Init<T2>();
+            //Storage.Init<T3>();
+            //Storage.Init<T4>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -472,11 +478,11 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
-            Storage.Init<T3>();
-            Storage.Init<T4>();
-            Storage.Init<T5>();
+            //Storage.Init<T1>();
+            //Storage.Init<T2>();
+            //Storage.Init<T3>();
+            //Storage.Init<T4>();
+            //Storage.Init<T5>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -498,12 +504,12 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
-            Storage.Init<T3>();
-            Storage.Init<T4>();
-            Storage.Init<T5>();
-            Storage.Init<T6>();
+            //Storage.Init<T1>();
+            //Storage.Init<T2>();
+            //Storage.Init<T3>();
+            //Storage.Init<T4>();
+            //Storage.Init<T5>();
+            //Storage.Init<T6>();
             types = new List<Type>
             {
                 typeof(T1),

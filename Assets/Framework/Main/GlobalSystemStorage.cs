@@ -8,19 +8,19 @@ namespace RangerV
     public class GlobalSystemStorage : MonoBehaviour
     {
         public static GlobalSystemStorage Instance { get => Singleton<GlobalSystemStorage>.Instance; }
-        public Dictionary<Type, ProcessingBase> InstanceProcessings;
+        public Dictionary<Type, ProcessingBase> Processings;
 
 
         public static void Init()
         {
-            Instance.InstanceProcessings = new Dictionary<Type, ProcessingBase>();
+            Instance.Processings = new Dictionary<Type, ProcessingBase>();
             //Debug.LogWarning("GlobalSystemStorage Init");
         }
 
         public static T Add<T>() where T : ProcessingBase, new()
         {
             T processing = new T(); 
-            Instance.InstanceProcessings.Add(typeof(T), processing);
+            Instance.Processings.Add(typeof(T), processing);
 
             if (processing is ICustomAwake)
                 (processing as ICustomAwake).OnAwake();   
@@ -32,15 +32,15 @@ namespace RangerV
         public static T Get<T>() where T : ProcessingBase
         {
             ProcessingBase resolve;
-            Instance.InstanceProcessings.TryGetValue(typeof(T), out resolve);
+            Instance.Processings.TryGetValue(typeof(T), out resolve);
             return (T)resolve;
         }
 
         public void StartProcessings()
         {
-            ProcessingBase[] values = new ProcessingBase[InstanceProcessings.Count];
-            InstanceProcessings.Values.CopyTo(values, 0);
-            for (int i = 0; i < InstanceProcessings.Count; i++)
+            ProcessingBase[] values = new ProcessingBase[Processings.Count];
+            Processings.Values.CopyTo(values, 0);
+            for (int i = 0; i < Processings.Count; i++)
             {
                 if(values[i] is ICustomStart)
                     (values[i] as ICustomStart).OnStart();
@@ -49,7 +49,7 @@ namespace RangerV
 
         public void ClearScene()
         {
-
+            //вжух
         }
     }
 }

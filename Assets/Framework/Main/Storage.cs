@@ -19,17 +19,13 @@ namespace RangerV
         protected static Dictionary<Type, Storage> StorageDictionary = new Dictionary<Type, Storage>();
 
         /// <summary>
-        ///костыльная функция, которая вызывает инициализацию Storage<ComponentType>
-        ///крайне не рекомендуется к использованию и надлежит ее заменить
-        ///вызывается в случае если вызывается функция TryAddGroup(Type componentType, GroupBase group),
-        ///где componentType - тип, который некода ранее не использовался и не инициализировался в Storage,
-        ///т.е.если через код вызвать Storage.TryAddGroup(typeof(какойто левый компонент, который используется впервые и нигде не объявлялся))
-        ///при нормальных условиях вызываться не должна
+        ///функция, которая вызывается в метсах, в которых может происходить доступ к еще не инициализированному Storage<ComponentType>
+        ///костыль, но помогает не париться с поиском и отслеживанием случаев неинициализированного Storage<ComponentType>
         /// </summary>
         /// <param name="ComponentType"></param>
         static void InitStorage(Type ComponentType)
         {
-            Activator.CreateInstance(Type.GetType("RangerV.Storage`1[" + ComponentType + "]"));
+            Activator.CreateInstance(Type.GetType(typeof(Storage).Namespace + ".Storage`1[" + ComponentType + "]"));
         }
 
         public static T GetComponent<T>(int entity) where T : ComponentBase, IComponent, new()
@@ -172,6 +168,7 @@ namespace RangerV
         public static void Nothing()
         {
             /*нужна для инициализации Storage если ее еще не было (например, в случае добавления исключений)*/
+            //уже не нужна
         }
 
         protected override ComponentBase GetComponent(int entity)

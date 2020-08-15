@@ -57,6 +57,7 @@ namespace RangerV
         private void OnEnable()
         {
             Debug.Log("Starter Enable");
+
             if (!initialized)
             {
                 Debug.LogWarning("EntitiesInitializing повторно");
@@ -72,10 +73,11 @@ namespace RangerV
             GlobalSystemStorage.Init();
             StarterSetup();
             initialized = true;
-            Group.UpdateAllGroups();
+            //Group.UpdateAllGroups();
+            GlobalSystemStorage.Instance.StartProcessings();
             Debug.LogWarning("Ребилд еще не доделан, некоторые функции могут не работать/работать некорректно");
             //Debug.Log("Re initialized:   " + initialized);
-        }
+        } 
 
         
         private void Update() // потом убрать
@@ -90,7 +92,7 @@ namespace RangerV
                         Debug.Log("сущность " + i + " существует");
                 }
 
-                Debug.Log("InstanceProcessings.Count = " + GlobalSystemStorage.Instance.InstanceProcessings.Count);
+                Debug.Log("InstanceProcessings.Count = " + GlobalSystemStorage.Instance.Processings.Count);
                 Debug.Log("groups.Count = " + Group.groups.Count);
                 //Debug.Log("groups.hachcode = " + Group.groups[0].hash_code_components);
             }

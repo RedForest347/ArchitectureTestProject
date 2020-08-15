@@ -33,7 +33,7 @@ namespace RangerV
                         if (_instance == null)
                         {
                             var singleton = new GameObject("[SINGLETON] " + typeof(T));
-                            Debug.Log("[SINGLETON] " + typeof(T).Name + " created");
+                            //Debug.Log("[SINGLETON] " + typeof(T).Name + " created");
                             _instance = singleton.AddComponent<T>();
                             DontDestroyOnLoad(singleton);
                         }

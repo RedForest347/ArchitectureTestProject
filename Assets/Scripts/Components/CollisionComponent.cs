@@ -20,14 +20,17 @@ public class CollisionComponent : ComponentBase, ICustomAwake
 
     public CollisionComponent()
     {
-
+        /*Debug.Log("CollisionComponent " + entity + "\n" +
+            "onCollisionEnterActionDictionary.Count = " + onCollisionEnterActionDictionary.Count +
+            "onCollisionExitActionDictionary Count = " + onCollisionExitActionDictionary.Count +
+            "onCollisionStayActionDictionary Count = " + onCollisionStayActionDictionary.Count
+            );*/
     }
 
     public void OnAwake()
     {
         entity = gameObject.GetComponent<Entity>().entity;
     }
-
 
 
 
@@ -91,11 +94,15 @@ public class CollisionComponent : ComponentBase, ICustomAwake
     #region HEAVY_VERSION
 
     public delegate void collisionAction(Collision collider, int entity);
+    [SerializeField, HideInInspector]
     private Dictionary<collisionAction, Collider[]> onCollisionEnterActionDictionary = new Dictionary<collisionAction, Collider[]>();
+    [SerializeField, HideInInspector]
     private Dictionary<collisionAction, Collider[]> onCollisionExitActionDictionary = new Dictionary<collisionAction, Collider[]>();
+    [SerializeField, HideInInspector]
     private Dictionary<collisionAction, Collider[]> onCollisionStayActionDictionary = new Dictionary<collisionAction, Collider[]>();
     private void OnCollisionAction(Collision other, Dictionary<collisionAction, Collider[]> triggerDictionary)
     {
+        Debug.Log("OnCollisionAction");
         foreach (var action in triggerDictionary)
         {
             for (int collider = 0; collider < action.Value.Length; collider++)
@@ -162,16 +169,22 @@ public class CollisionComponent : ComponentBase, ICustomAwake
 
 
     public delegate void triggerAction(Collider collider, int entity);
+    [SerializeField, HideInInspector]
     private Dictionary<triggerAction, Collider[]> onTriggerEnterActionDictionary = new Dictionary<triggerAction, Collider[]>();
+    [SerializeField, HideInInspector]
     private Dictionary<triggerAction, Collider[]> onTriggerExitActionDictionary = new Dictionary<triggerAction, Collider[]>();
+    [SerializeField, HideInInspector]
     private Dictionary<triggerAction, Collider[]> onTriggerStayActionDictionary = new Dictionary<triggerAction, Collider[]>();
     private void OnTriggerAction(Collider other, Dictionary<triggerAction, Collider[]> triggerDictionary)
     {
+        
         foreach (var action in triggerDictionary)
         {
             for (int collider = 0; collider < action.Value.Length; collider++)
                 if (other == action.Value[collider])
                     return;
+
+            Debug.Log("OnTriggerAction");
             action.Key(other, entity);
         }
     }
@@ -201,14 +214,17 @@ public class CollisionComponent : ComponentBase, ICustomAwake
                 return false;
         }
     }
+
     public bool AddOnTriggerAction(triggerAction action, CollisionActionType collisionType, Collider ignorCollider)
     {
         return AddOnTriggerAction(action, collisionType, new Collider[] { ignorCollider });
     }
+
     public bool AddOnTriggerAction(triggerAction action, CollisionActionType collisionType)
     {
         return AddOnTriggerAction(action, collisionType, new Collider[0]);
     }
+
     public void RemoveOnTriggerAction(triggerAction action, CollisionActionType collisionType)
     {
         switch (collisionType)

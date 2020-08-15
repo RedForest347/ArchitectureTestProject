@@ -112,8 +112,6 @@ namespace RangerV
 
         private void OnEnable()
         {
-            //Debug.Log("EntityBase Enable");
-            //Debug.Log("requireStarter = " + state.requireStarter + " enabled = " + state.enabled);
             if (state.requireStarter)
                 return;
             if (state.enabled)
@@ -121,7 +119,6 @@ namespace RangerV
 
             state.enabled = true;
 
-            //Debug.Log("Length = " + Entities.Length + " nextMax = " + nextMax + " freeID.Count = " + freeID.Count); 
             Entities[entity] = this;
 
             OnBeforeAddComponents?.Invoke(entity);
@@ -136,8 +133,6 @@ namespace RangerV
             }
 
             OnActivateEntity?.Invoke(entity);
-
-            //Debug.Log("entity " + entity + " (" + gameObject.GetInstanceID() + ") --Activate--"); 
         }
 
         private void OnDisable()
@@ -212,7 +207,7 @@ namespace RangerV
 
             if (Storage.ContainsComponent(componentType, entity))
             {
-                Debug.LogWarning("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity + " компонент добавлен не будет");
+                Debug.LogWarning("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity + " (" + EntityBase.GetEntity(entity).gameObject.name + ")." + " компонент добавлен не будет");
                 return null;
             }
 
