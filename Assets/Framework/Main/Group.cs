@@ -19,7 +19,7 @@ namespace RangerV
 
         #region Static Func
 
-        public static List<Group> groups = new List<Group>(); // убрать public
+        static List<Group> groups = new List<Group>(); // убрать public
 
         public static Group Create(ComponentsList Components, Action<int> OnAdd = null)
         {
@@ -53,7 +53,10 @@ namespace RangerV
             Group exist_group = GetExistGroup(group);
 
             if (exist_group != null)
+            {
+                exist_group.group_per_instance++;
                 return exist_group;
+            }
 
             group.OnAddEntity += OnAdd;
 
@@ -65,12 +68,13 @@ namespace RangerV
             return group;
         }
 
-        public static void UpdateAllGroups()
+        public static void Clear()
         {
             for (int i = 0; i < groups.Count; i++)
             {
-                groups[i].InitDictionary();
+                groups[i].DeleteBase();
             }
+            groups = new List<Group>();
         }
 
         static Group GetExistGroup(Group group)
@@ -82,7 +86,7 @@ namespace RangerV
             return null;
         }
 
-        public static bool operator == (Group group1, Group group2)
+        public static bool operator ==(Group group1, Group group2)
         {
             if (group1 is null || group2 is null)
                 return ReferenceEquals(group1, group2);
@@ -90,7 +94,7 @@ namespace RangerV
             return group1.hash_code_components == group2.hash_code_components && group1.hash_code_exceptions == group2.hash_code_exceptions;
         }
 
-        public static bool operator != (Group group1, Group group2)
+        public static bool operator !=(Group group1, Group group2)
         {
             return !(group1 == group2);
         }
@@ -98,6 +102,9 @@ namespace RangerV
 
         #endregion Static Func
 
+
+
+        int group_per_instance; // сколько групп ссылается на данную ссылку
 
         public int entities_count { get; private set; }
 
@@ -116,12 +123,13 @@ namespace RangerV
 
         private Group(List<Type> Components, List<Type> Exceptions)
         {
-            if (Components == null) 
+            if (Components == null)
                 Debug.LogError("при создании группы, лист Components пуст");
             if (Exceptions == null)
                 Debug.LogError("при создании группы, лист Exceptions пуст");
 
             entities_count = 0;
+            group_per_instance = 1;
             this.Components = Components;
             this.Exceptions = Exceptions;
 
@@ -129,15 +137,16 @@ namespace RangerV
                 hash_code_components += Components[i].GetHashCode();
             for (int i = 0; i < Exceptions.Count; i++)
                 hash_code_exceptions += Exceptions[i].GetHashCode();
+
+
         }
 
         void AddEntity(int entity)
         {
             EntitiesDictionary[entity].was_added = true;
             entities_count++;
-            //Debug.Log("OnAddEntity");
             OnAddEntity?.Invoke(entity);
-        } 
+        }
 
         void RemoveEntity(int entity)
         {
@@ -210,23 +219,28 @@ namespace RangerV
             }
         }
 
-        void FinalEvents() // куда нибудь запихнуть
+
+        void FinalEvents()
         {
-            if (Components == null)
-                return;
+            EntityBase.OnBeforeAddComponents -= OnCreateNewEntityID;
 
-            EntityBase.OnCreateEntityID -= OnCreateNewEntityID;
-
-            for (int comp = 0; comp < Components.Count; comp++)
+            if (Components != null)
             {
-                Storage.GetStorage(Components[comp]).OnAdd -= OnAddComponent;
-                Storage.GetStorage(Components[comp]).OnRemove -= OnRemoveComponent;
+                for (int comp = 0; comp < Components.Count; comp++)
+                {
+                    Storage.GetStorage(Components[comp]).OnAdd -= OnAddComponent;
+                    Storage.GetStorage(Components[comp]).OnRemove -= OnRemoveComponent;
+                }
             }
 
-            for (int exceptions = 0; exceptions < Exceptions.Count; exceptions++)
+
+            if (Exceptions != null)
             {
-                Storage.GetStorage(Exceptions[exceptions]).OnAdd -= OnAddException;
-                Storage.GetStorage(Exceptions[exceptions]).OnRemove -= OnRemoveException;
+                for (int exceptions = 0; exceptions < Exceptions.Count; exceptions++)
+                {
+                    Storage.GetStorage(Exceptions[exceptions]).OnAdd -= OnAddException;
+                    Storage.GetStorage(Exceptions[exceptions]).OnRemove -= OnRemoveException;
+                }
             }
         }
 
@@ -236,6 +250,10 @@ namespace RangerV
             {
                 EntitiesDictionary.Add(entity, null);
             }
+
+            if (Components == null)
+                Debug.Log("hash_code_components = " + hash_code_components);
+
 
             EntContainer entContainer = new EntContainer(entity, Components.Count);
 
@@ -299,14 +317,22 @@ namespace RangerV
                 AddEntity(ent);
         }
 
+        ///пользоваться осторожно
         public void Delete() // функция, которая обнуляет группу
         {
+            if (group_per_instance != 1)
+                Debug.LogWarning("На данную группу ссылаются и из других мест. Ее удаление в данном случае не рекомендуется");
+            DeleteBase();
+        }
+
+        void DeleteBase()
+        {
             // придумать что делать если на одну группу ссылаются несколько ссылок
-            /*FinalEvents();
-            Entities = null;
+            FinalEvents();
+            //Entities = null;
             Components = Exceptions = null;
             hash_code_components = hash_code_exceptions = 0;
-            groups.Remove(this);*/
+            groups.Remove(this);
         }
 
         public bool Contains(int entity)
@@ -333,13 +359,13 @@ namespace RangerV
 
             for (int i = 0; i < array.Length; i++)
                 if (array[i].was_added)
-                    yield return array[i].entity; 
+                    yield return array[i].entity;
         }
 
         #endregion Equals/HashCode/Enumerator
 
 
-        class EntContainer 
+        class EntContainer
         {
             public int remains_components; // сколько компонентов осталось до полного набора
             public int remains_exceptions; // сколько осталось лишних исключений
@@ -388,7 +414,7 @@ namespace RangerV
 
     #region ComponentsList
 
-    public class ComponentsList 
+    public class ComponentsList
     {
         public List<Type> types;
         public ComponentsList Empty { get => new ComponentsList(); }
@@ -399,12 +425,11 @@ namespace RangerV
         }
     }
 
-    public class ComponentsList<T1> : ComponentsList 
+    public class ComponentsList<T1> : ComponentsList
                                         where T1 : ComponentBase, IComponent, new()
     {
         public ComponentsList()
         {
-            //Storage.Init<T1>();
             types = new List<Type>
             {
                 typeof(T1)
@@ -418,8 +443,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            //Storage.Init<T1>();
-            //Storage.Init<T2>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -435,9 +458,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            //Storage.Init<T1>();
-            //Storage.Init<T2>();
-            //Storage.Init<T3>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -455,10 +475,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            //Storage.Init<T1>();
-            //Storage.Init<T2>();
-            //Storage.Init<T3>();
-            //Storage.Init<T4>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -478,11 +494,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            //Storage.Init<T1>();
-            //Storage.Init<T2>();
-            //Storage.Init<T3>();
-            //Storage.Init<T4>();
-            //Storage.Init<T5>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -504,12 +515,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            //Storage.Init<T1>();
-            //Storage.Init<T2>();
-            //Storage.Init<T3>();
-            //Storage.Init<T4>();
-            //Storage.Init<T5>();
-            //Storage.Init<T6>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -523,6 +528,4 @@ namespace RangerV
     }
 
     #endregion ComponentsList
-
-
 }

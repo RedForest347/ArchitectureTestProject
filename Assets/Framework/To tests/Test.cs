@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using static RangerV.ThreadManager;
 using Stopwatch = System.Diagnostics.Stopwatch;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public class Test : MonoBehaviour
 {
@@ -21,7 +23,7 @@ public class Test : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.L))
         {
-            
+            SceneManager.LoadScene(0);
         }
     }
 

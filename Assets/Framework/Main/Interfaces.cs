@@ -29,16 +29,17 @@ namespace RangerV
         void CustomLateUpdate();
     }
 
-    public interface IComponent
+    public interface ICustomDisable
     {
-    }
-
-    public interface ISignal
-    {
+        void OnDisable();
     }
 
     public interface IReceive<T> where T : ISignal, new()
     {
         void SignalHandler(T arg);
     }
+
+    public interface IComponent { }
+
+    public interface ISignal { }
 }

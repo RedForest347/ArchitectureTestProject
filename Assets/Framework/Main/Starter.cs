@@ -6,19 +6,6 @@ using UnityEngine.SceneManagement;
 
 namespace RangerV
 {
-    class Some2
-    {
-        static Some2()
-        {
-            Debug.Log("static конструктор 2");
-        }
-        public Some2()
-        {
-            //new GameObject("DDD");
-            Debug.LogWarning(" isEditor = " + Application.isEditor/* + " genuine? = " + Application.genuine + "  " */);
-            Debug.Log("конструктор 2");
-        }
-    }
 
     // В Starter выполняется главный Awake сцены. В Awake сначала создается ManagerUpdate, после происходит добавление processing'ов в GSS словарь
     // (происходит это в StarterSetup, переопределенном в специальном классе унаследованном от Starter). 
@@ -33,14 +20,6 @@ namespace RangerV
     public class Starter : MonoBehaviour        
     {
         public static bool initialized;
-
-        //Some2 some2 = new Some2();
-
-        //static Starter()
-        //{
-        //    Debug.LogWarning(/*"isPlaying = " + Application.isPlaying + */" isEditor = " + Application.isEditor/* + " genuine? = " + Application.genuine + "  " */);
-        //    Debug.Log("static starter");
-        //}
 
         private void Awake()
         {
@@ -73,30 +52,11 @@ namespace RangerV
             GlobalSystemStorage.Init();
             StarterSetup();
             initialized = true;
-            //Group.UpdateAllGroups();
+
             GlobalSystemStorage.Instance.StartProcessings();
             Debug.LogWarning("Ребилд еще не доделан, некоторые функции могут не работать/работать некорректно");
-            //Debug.Log("Re initialized:   " + initialized);
+
         } 
-
-        
-        private void Update() // потом убрать
-        {
-            if (Input.GetKeyDown(KeyCode.N))
-            {
-                Debug.Log("Was Update");
-
-                for (int i = 0; i < EntityBase.entity_count; i++)
-                {
-                    if (EntityBase.EntityExists(i))
-                        Debug.Log("сущность " + i + " существует");
-                }
-
-                Debug.Log("InstanceProcessings.Count = " + GlobalSystemStorage.Instance.Processings.Count);
-                Debug.Log("groups.Count = " + Group.groups.Count);
-                //Debug.Log("groups.hachcode = " + Group.groups[0].hash_code_components);
-            }
-        }
 
         void EntitiesInitializing()
         {
@@ -108,6 +68,13 @@ namespace RangerV
             }
         }
 
+        void EntitiesDeinitializing()
+        {
+            for (int entity = 0; entity < EntityBase.entity_count; entity++)
+                if (EntityBase.ContainsEntity(entity))
+                    Destroy(EntityBase.GetEntity(entity));
+        }
+
         /// <summary>
         /// Setup стартера уровня. В стартере уровня выполняется добавление processing'ов в GSS
         /// </summary>
@@ -115,8 +82,20 @@ namespace RangerV
 
         protected virtual void OnDestroy()
         {
-            initialized = false; 
+            ClearScene();
             Debug.Log("initialized:   " + initialized);
         }
+
+
+        void ClearScene()
+        {
+            EntitiesDeinitializing();
+            ManagerUpdate.Clear();
+            GlobalSystemStorage.Instance.StopProcessings();
+            Group.Clear();
+            initialized = false;
+            Debug.Log("ClearScene");
+        }
+
     }
 }

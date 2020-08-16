@@ -45,8 +45,12 @@ public class ColisionDamageProcessing : ProcessingBase, ICustomUpdate, ICustomSt
             healthComponent.health -= 5;
             if (healthComponent.health <= 0)
                 GameObject.Destroy(Storage.GetComponent<GameObjectComponent>(target_entity).GameObject);
+
             if (Storage.GetComponent<CollisionDamageComponent>(entity).destroy_on_collision)
+            {
+                //Debug.Log("Storage.GetComponent<GameObjectComponent>(entity) = " + Storage.GetComponent<GameObjectComponent>(entity));
                 GameObject.Destroy(Storage.GetComponent<GameObjectComponent>(entity).GameObject);
+            }
         }
     }
 

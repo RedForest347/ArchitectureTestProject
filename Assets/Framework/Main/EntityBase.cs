@@ -37,7 +37,7 @@ namespace RangerV
             return Entities[entity];
         }
 
-        public static bool EntityExists(int entity)
+        public static bool ContainsEntity(int entity)
         {
             return Entities[entity] != null;
         }
@@ -155,7 +155,7 @@ namespace RangerV
             state.enabled = false;
             ManagerUpdate.Instance.RemoveFrom(this);
             Storage.RemoveFromAllStorages(entity);
-            Entities[entity] = null;
+            Entities[entity] = null;///
             //Debug.Log("entity " + entity + " (" + gameObject.GetInstanceID() + ") --Deactivate--");
         }
 

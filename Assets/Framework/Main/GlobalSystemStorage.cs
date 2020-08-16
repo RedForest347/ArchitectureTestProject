@@ -8,13 +8,12 @@ namespace RangerV
     public class GlobalSystemStorage : MonoBehaviour
     {
         public static GlobalSystemStorage Instance { get => Singleton<GlobalSystemStorage>.Instance; }
-        public Dictionary<Type, ProcessingBase> Processings;
+        Dictionary<Type, ProcessingBase> Processings;
 
 
         public static void Init()
         {
             Instance.Processings = new Dictionary<Type, ProcessingBase>();
-            //Debug.LogWarning("GlobalSystemStorage Init");
         }
 
         public static T Add<T>() where T : ProcessingBase, new()
@@ -45,6 +44,18 @@ namespace RangerV
                 if(values[i] is ICustomStart)
                     (values[i] as ICustomStart).OnStart();
             }
+        }
+
+        public void StopProcessings()
+        {
+            ProcessingBase[] values = new ProcessingBase[Processings.Count];/// 
+            Processings.Values.CopyTo(values, 0);
+            for (int i = 0; i < Processings.Count; i++)
+            {
+                if (values[i] is ICustomDisable)
+                    (values[i] as ICustomDisable).OnDisable();
+            }
+            Processings = new Dictionary<Type, ProcessingBase>();
         }
 
         public void ClearScene()

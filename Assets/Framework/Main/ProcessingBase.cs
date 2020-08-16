@@ -11,6 +11,12 @@ namespace RangerV
     ///     при ребилде повторно выполняется ICustomStart. ICustomAwake при ребилде не выполняется
     /// 
     /// добавление компонента в ManagerUpdate производится в стартере уровня (например, в Level1Starter), куда нужно вручную вписывать процессинг
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// ICustomDisable---написать про это
     /// </summary>
     public class ProcessingBase
     {

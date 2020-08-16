@@ -184,7 +184,7 @@ public class CollisionComponent : ComponentBase, ICustomAwake
                 if (other == action.Value[collider])
                     return;
 
-            Debug.Log("OnTriggerAction");
+            //Debug.Log("OnTriggerAction");
             action.Key(other, entity);
         }
     }

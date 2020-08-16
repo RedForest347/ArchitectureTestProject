@@ -4,4 +4,4 @@ Dictionary и event
 3)	различия между CustomStart и CustomAwake - одно вызывается при OnEnable сцены, другое единожды
 
 4)	для ComponentBase сделать CustomStart и CustomAwake в положенные времена (сделать OnFirstEnable и к AddComponent)
-5)	удаление синглтонов при остановке сцены
+5)	удаление синглтонов при остановке сцены (сложное, отложено)

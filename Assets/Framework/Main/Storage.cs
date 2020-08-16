@@ -70,18 +70,10 @@ namespace RangerV
 
         public static bool AddComponent<T>(T componentBase, int entity) where T : ComponentBase, IComponent, new()
         {
-            //Debug.Log(" componentBase = " + componentBase.GetType());
-            if (!StorageDictionary.ContainsKey(componentBase.GetType()))///
+            if (!StorageDictionary.ContainsKey(componentBase.GetType()))
                 InitStorage(componentBase.GetType());
 
             return StorageDictionary[componentBase.GetType()].Add(componentBase, entity);
-        }
-
-        public static void Init<T>() where T : ComponentBase, IComponent, new()
-        {
-            //Storage<T>.Nothing();
-            // если возникнут проблемы, следует раскомментировать, но вроде все норм
-
         }
 
         public static void RemoveFromAllStorages(int entity)
@@ -181,14 +173,9 @@ namespace RangerV
             if (entityData[entity].have_component)
                 Debug.LogWarning("сущность " + entity + " уже имеет компонент " + (T)component + ". он будет перезаписан");
 
-
             entityData[entity] = new EntityData.entityData(true, (T)component);
-
-            //Debug.Log("к сущности " + entity + " добавлен компонент " + (T)component/* + " в Storage " + typeof(T)*/);
             OnAdd?.Invoke(entity);
-            //Debug.Log("у сущности " + entity + " добавился компонент " + typeof(T));
 
-            //Group.AddToGroups(entity);
             return true;
         }
 
@@ -197,9 +184,7 @@ namespace RangerV
             if (!entityData[entity].have_component)
                 return;
 
-            //UnityEngine.Object.Destroy(entityData[entity].component);
             entityData[entity].SetDefault();
-
             OnRemove?.Invoke(entity);
         }
     }

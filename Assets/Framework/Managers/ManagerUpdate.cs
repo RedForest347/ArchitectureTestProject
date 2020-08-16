@@ -18,6 +18,13 @@ namespace RangerV
 
         }
 
+        public static void Clear()
+        {
+            Instance.updates = new List<ICustomUpdate>();
+            Instance.fixedupdates = new List<ICustomFixedUpdate>();
+            Instance.lateupdates = new List<ICustomLateUpdate>();
+        }
+
 
         public void AddTo(object updateble)      //посылаем сюда object унаследованный от ICustomUpdate/ICustomFixedUpdate/ICustomLateUpdate
         {
