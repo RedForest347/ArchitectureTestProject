@@ -137,7 +137,6 @@ namespace RangerV
 
         private void OnDisable()
         {
-            //Debug.Log("Disable");
             OnDeactivate();
         }
 
@@ -145,18 +144,19 @@ namespace RangerV
         {
             state.runtime = false;
             freeID.Push(entity);
-            Entities[entity] = null;
             entity = -1;
         }
 
         public void OnDeactivate()
         {
-            OnDestroyEntity?.Invoke(entity);
+            
             state.enabled = false;
             ManagerUpdate.Instance.RemoveFrom(this);
             Storage.RemoveFromAllStorages(entity);
+
             Entities[entity] = null;///
-            //Debug.Log("entity " + entity + " (" + gameObject.GetInstanceID() + ") --Deactivate--");
+
+            OnDestroyEntity?.Invoke(entity);
         }
 
 
@@ -363,6 +363,11 @@ namespace RangerV
             Entities = new EntityBase[10];
             nextMax = 1;
             freeID = new Stack<int>(25);
+        }
+
+        private void OnDestroy()
+        {
+            Debug.Log("EntityBaseData destroyed");
         }
     }
 }

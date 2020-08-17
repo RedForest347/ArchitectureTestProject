@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Stopwatch = System.Diagnostics.Stopwatch;
 using System.Linq;
 using UnityEngine;
+using System.Reflection;
 
 namespace RangerV
 {
@@ -19,7 +20,7 @@ namespace RangerV
 
         #region Static Func
 
-        static List<Group> groups = new List<Group>(); // убрать public
+        static List<Group> groups = new List<Group>();
 
         public static Group Create(ComponentsList Components, Action<int> OnAdd = null)
         {
@@ -71,9 +72,8 @@ namespace RangerV
         public static void Clear()
         {
             for (int i = 0; i < groups.Count; i++)
-            {
                 groups[i].DeleteBase();
-            }
+
             groups = new List<Group>();
         }
 
@@ -104,7 +104,7 @@ namespace RangerV
 
 
 
-        int group_per_instance; // сколько групп ссылается на данную ссылку
+        
 
         public int entities_count { get; private set; }
 
@@ -112,6 +112,8 @@ namespace RangerV
 
         List<Type> Components;
         List<Type> Exceptions;
+
+        int group_per_instance; // сколько групп ссылается на данную ссылку
 
         long hash_code_components;
         long hash_code_exceptions;
@@ -160,6 +162,7 @@ namespace RangerV
             List<Type> componentsTypes = new List<Type>(Components.Count);
             for (int i = 0; i < Components.Count; i++)
                 componentsTypes.Add(Components[i]);
+
             return componentsTypes;
         }
 
@@ -168,6 +171,7 @@ namespace RangerV
             List<Type> exceptionsTypes = new List<Type>(Exceptions.Count);
             for (int i = 0; i < Exceptions.Count; i++)
                 exceptionsTypes.Add(Exceptions[i]);
+
             return exceptionsTypes;
         }
 
@@ -251,10 +255,6 @@ namespace RangerV
                 EntitiesDictionary.Add(entity, null);
             }
 
-            if (Components == null)
-                Debug.Log("hash_code_components = " + hash_code_components);
-
-
             EntContainer entContainer = new EntContainer(entity, Components.Count);
 
             for (int comp = 0; comp < Components.Count; comp++)
@@ -291,14 +291,6 @@ namespace RangerV
         }
         void OnRemoveComponent(int ent)
         {
-            /*Debug.Log("EntitiesDictionary (" + (hash_code_components % 256) + ") contains: ");
-            foreach (var item in EntitiesDictionary.Values)
-            {
-                Debug.Log(item.entity);
-            }
-
-            Debug.Log("end");*/
-
             EntitiesDictionary[ent].remains_components++;
 
             if (EntitiesDictionary[ent].was_added)
@@ -329,7 +321,6 @@ namespace RangerV
         {
             // придумать что делать если на одну группу ссылаются несколько ссылок
             FinalEvents();
-            //Entities = null;
             Components = Exceptions = null;
             hash_code_components = hash_code_exceptions = 0;
             groups.Remove(this);

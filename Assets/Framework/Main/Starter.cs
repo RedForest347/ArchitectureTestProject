@@ -27,26 +27,19 @@ namespace RangerV
             GlobalSystemStorage.Init();
             StarterSetup();
             initialized = true;
-            Debug.Log("initialized:   " + initialized);
-
             EntitiesInitializing();
             GlobalSystemStorage.Instance.StartProcessings();
+
+            Debug.Log("initialized:   " + initialized);
         }
 
         private void OnEnable()
         {
-            Debug.Log("Starter Enable");
-
             if (!initialized)
-            {
-                Debug.LogWarning("EntitiesInitializing повторно");
-                ReInitialisation();
-            }
-
-            
+                OnRebuild();
         }
 
-        void ReInitialisation() // происходит при реблде
+        void OnRebuild()
         {
             ManagerUpdate.Init();
             GlobalSystemStorage.Init();
@@ -54,9 +47,8 @@ namespace RangerV
             initialized = true;
 
             GlobalSystemStorage.Instance.StartProcessings();
-            Debug.LogWarning("Ребилд еще не доделан, некоторые функции могут не работать/работать некорректно");
-
-        } 
+            Debug.LogWarning("Произошел ребилд. При возникновении багов, опишите проблему и обратитесь ко мне");
+        }
 
         void EntitiesInitializing()
         {
@@ -80,22 +72,37 @@ namespace RangerV
         /// </summary>
         public virtual void StarterSetup() { }
 
-        protected virtual void OnDestroy()
+        private void OnApplicationQuit()
         {
-            ClearScene();
-            Debug.Log("initialized:   " + initialized);
+            ClearSceneOnQuit();
         }
 
+        private void OnDisable()
+        {
+            ClearScene();
+        }
 
         void ClearScene()
         {
-            EntitiesDeinitializing();
+            if (!initialized)
+                return;
+
             ManagerUpdate.Clear();
-            GlobalSystemStorage.Instance.StopProcessings();
+            GlobalSystemStorage.StopProcessings();
             Group.Clear();
             initialized = false;
-            Debug.Log("ClearScene");
         }
 
+        void ClearSceneOnQuit()
+        {
+            if (!initialized)
+                return;
+
+            EntitiesDeinitializing();
+            ManagerUpdate.Clear();
+            GlobalSystemStorage.StopProcessings();
+            Group.Clear();
+            initialized = false;
+        }
     }
 }

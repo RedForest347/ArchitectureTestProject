@@ -39,6 +39,7 @@ namespace RangerV
         {
             ProcessingBase[] values = new ProcessingBase[Processings.Count];
             Processings.Values.CopyTo(values, 0);
+
             for (int i = 0; i < Processings.Count; i++)
             {
                 if(values[i] is ICustomStart)
@@ -46,21 +47,21 @@ namespace RangerV
             }
         }
 
-        public void StopProcessings()
+        public static void StopProcessings()
         {
-            ProcessingBase[] values = new ProcessingBase[Processings.Count];/// 
-            Processings.Values.CopyTo(values, 0);
-            for (int i = 0; i < Processings.Count; i++)
-            {
+            Dictionary<Type, ProcessingBase> processings = Instance.Processings;
+            ProcessingBase[] values = new ProcessingBase[processings.Count];/// 
+            processings.Values.CopyTo(values, 0);
+            for (int i = 0; i < processings.Count; i++)
                 if (values[i] is ICustomDisable)
                     (values[i] as ICustomDisable).OnDisable();
-            }
-            Processings = new Dictionary<Type, ProcessingBase>();
+
+            processings = new Dictionary<Type, ProcessingBase>();
         }
 
-        public void ClearScene()
+        private void OnDestroy()
         {
-            //вжух
+            Debug.Log("GlobalSystemStorage destroyed");
         }
     }
 }

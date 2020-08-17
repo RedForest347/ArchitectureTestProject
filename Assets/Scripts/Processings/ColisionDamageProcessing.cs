@@ -10,11 +10,6 @@ public class ColisionDamageProcessing : ProcessingBase, ICustomUpdate, ICustomSt
 
     public void OnStart()
     {
-        /*foreach (int entity in collision_group)
-        {
-            Storage.GetComponent<CollisionComponent>(entity).AddOnTriggerAction(GiveDamage, CollisionActionType.Enter, GameObject.Find("EaglePlayer").GetComponent<Collider>());
-        }*/
-        Debug.Log("ColisionDamageProcessing OnStart");
         collision_group.OnAddEntity += DDD;
     }
 
@@ -28,10 +23,7 @@ public class ColisionDamageProcessing : ProcessingBase, ICustomUpdate, ICustomSt
 
     public void CustomUpdate()
     {
-        /*foreach (int entity in collision_group)
-        {
-            Storage.GetComponent<CollisionComponent>(entity).AddOnTriggerAction(GiveDamage, CollisionActionType.Enter, GameObject.Find("EaglePlayer").GetComponent<Collider>());
-        }*/
+
     }
 
 
