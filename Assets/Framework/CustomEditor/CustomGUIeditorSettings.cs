@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#if DEBUG
+
+using UnityEditor;
 using UnityEngine;
 
 namespace RangerV
@@ -62,3 +64,5 @@ namespace RangerV
 
     }
 }
+
+#endif

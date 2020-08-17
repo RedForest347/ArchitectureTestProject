@@ -52,16 +52,12 @@ namespace RangerV
             Dictionary<Type, ProcessingBase> processings = Instance.Processings;
             ProcessingBase[] values = new ProcessingBase[processings.Count];/// 
             processings.Values.CopyTo(values, 0);
+
             for (int i = 0; i < processings.Count; i++)
                 if (values[i] is ICustomDisable)
                     (values[i] as ICustomDisable).OnDisable();
 
             processings = new Dictionary<Type, ProcessingBase>();
-        }
-
-        private void OnDestroy()
-        {
-            Debug.Log("GlobalSystemStorage destroyed");
         }
     }
 }

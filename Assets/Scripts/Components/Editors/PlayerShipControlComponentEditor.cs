@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if DEBUG
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RangerV;
@@ -34,5 +36,5 @@ public class PlayerShipControlComponentEditor : Editor
 
 }
 
-
+#endif
 

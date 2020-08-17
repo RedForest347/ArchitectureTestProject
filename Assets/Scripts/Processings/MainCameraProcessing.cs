@@ -7,9 +7,15 @@ public class MainCameraProcessing : ProcessingBase, ICustomAwake, ICustomUpdate,
 
     Camera MainCamera;
 
-    public void OnAwake()   //при добавлении в GlobalSystemStorage
+    public MainCameraProcessing()
     {
         MainCamera = Camera.main;
+
+    }
+
+    public void OnAwake()   //при добавлении в GlobalSystemStorage
+    {
+        
     }
 
     public void CustomUpdate()
@@ -21,7 +27,7 @@ public class MainCameraProcessing : ProcessingBase, ICustomAwake, ICustomUpdate,
         }
     }
 
-    public void CustomFixedUpdate()      //FixedUpdate
+    public void CustomFixedUpdate()
     {
         
     }
