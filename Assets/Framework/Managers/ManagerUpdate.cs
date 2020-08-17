@@ -11,41 +11,24 @@ namespace RangerV
         private List<ICustomLateUpdate> lateupdates = new List<ICustomLateUpdate>();
 
 
-        public static ManagerUpdate InstanceManagerUpdate;
+        public static ManagerUpdate Instance { get => Singleton<ManagerUpdate>.Instance; }
 
-        //public static ManagerUpdate InstanceManagerUpdate 
-        //{
-        //    get
-        //    {
-        //        if (instanceManagerUpdate == null)
-        //        {
-        //            if (GameObject.Find("[SETUP]").GetComponent<ManagerUpdate>() == null)
-        //            {
-        //                //Debug.Log("first time");
-        //                instanceManagerUpdate = GameObject.Find("[SETUP]").AddComponent<ManagerUpdate>();
-        //            }
-        //            else
-        //            {
-        //                instanceManagerUpdate = GameObject.Find("[SETUP]").GetComponent<ManagerUpdate>();
-        //            }
-        //        }
-        //        return instanceManagerUpdate;
-        //    }
-        //    set { }
-        //}
-
-        public static void Create()
+        public static void Init()
         {
-            InstanceManagerUpdate = GameObject.Find("[SETUP]").AddComponent<ManagerUpdate>();
-            //InstanceManagerUpdate.GetType();
-            Debug.Log("ManagerUpdate instantiated");
+
         }
 
+        public static void Clear()
+        {
+            Instance.updates = new List<ICustomUpdate>();
+            Instance.fixedupdates = new List<ICustomFixedUpdate>();
+            Instance.lateupdates = new List<ICustomLateUpdate>();
+        }
 
 
         public void AddTo(object updateble)      //посылаем сюда object унаследованный от ICustomUpdate/ICustomFixedUpdate/ICustomLateUpdate
         {
-            ManagerUpdate mngUpdate = InstanceManagerUpdate;
+            ManagerUpdate mngUpdate = Instance;
 
             if (updateble is ICustomUpdate)
                 mngUpdate.updates.Add(updateble as ICustomUpdate);
@@ -57,9 +40,10 @@ namespace RangerV
                 mngUpdate.lateupdates.Add(updateble as ICustomLateUpdate);
 
         }
+
         public void RemoveFrom(object updateble)     //посылаем сюда object унаследованный от ICustomUpdate/ICustomFixedUpdate/ICustomLateUpdate
         {
-            ManagerUpdate mngUpdate = InstanceManagerUpdate;
+            ManagerUpdate mngUpdate = Instance;
 
             if (updateble is ICustomUpdate)
                 mngUpdate.updates.Remove(updateble as ICustomUpdate);
@@ -70,7 +54,6 @@ namespace RangerV
             if (updateble is ICustomLateUpdate)
                 mngUpdate.lateupdates.Remove(updateble as ICustomLateUpdate);
         }
-
 
 
         private void Update()

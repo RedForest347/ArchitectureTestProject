@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using Stopwatch = System.Diagnostics.Stopwatch;
 using System.Linq;
 using UnityEngine;
-using System.Runtime.CompilerServices;
-
+using System.Reflection;
 
 namespace RangerV
 {
@@ -25,8 +24,9 @@ namespace RangerV
 
         public static Group Create(ComponentsList Components, Action<int> OnAdd = null)
         {
-            return Create(Components, null, OnAdd/*new ComponentsList()*/);
+            return Create(Components, null, OnAdd);
         }
+
 
         /// <summary>
         /// подразумевается, что Components и Exceptions будут созданы с помощью new ComponentsList<>()
@@ -54,7 +54,10 @@ namespace RangerV
             Group exist_group = GetExistGroup(group);
 
             if (exist_group != null)
+            {
+                exist_group.group_per_instance++;
                 return exist_group;
+            }
 
             group.OnAddEntity += OnAdd;
 
@@ -66,6 +69,14 @@ namespace RangerV
             return group;
         }
 
+        public static void Clear()
+        {
+            for (int i = 0; i < groups.Count; i++)
+                groups[i].DeleteBase();
+
+            groups = new List<Group>();
+        }
+
         static Group GetExistGroup(Group group)
         {
             for (int i = 0; i < groups.Count; i++)
@@ -75,31 +86,7 @@ namespace RangerV
             return null;
         }
 
-        /*public static void RemoveFromAllGroups(int entity)
-        {
-            for (int i = 0; i < groups.Count; i++)
-                groups[i].RemoveEntity(entity);
-        }*/
-
-        static bool ShouldJoinToGroup(Group Group, int entity)
-        {
-            List<Type> Components = Group.GetComponentTypes();
-            List<Type> Exceptions = Group.GetExceptionTypes();
-
-            for (int i = 0; i < Exceptions.Count; i++)
-                if (EntityBase.GetEntity(entity).ContainsEntityComponent(Exceptions[i]))
-                    return false;
-
-            for (int i = 0; i < Components.Count; i++)
-                if (!EntityBase.GetEntity(entity).ContainsEntityComponent(Components[i]))
-                    return false;
-
-            return true;
-        }
-
-
-
-        public static bool operator == (Group group1, Group group2)
+        public static bool operator ==(Group group1, Group group2)
         {
             if (group1 is null || group2 is null)
                 return ReferenceEquals(group1, group2);
@@ -107,25 +94,26 @@ namespace RangerV
             return group1.hash_code_components == group2.hash_code_components && group1.hash_code_exceptions == group2.hash_code_exceptions;
         }
 
-        public static bool operator != (Group group1, Group group2)
+        public static bool operator !=(Group group1, Group group2)
         {
             return !(group1 == group2);
         }
-
 
 
         #endregion Static Func
 
 
 
-        //List<int> Entities;
-        //public int Entities_count { get => Entities.Count; }
+        
+
         public int entities_count { get; private set; }
 
         Dictionary<int, EntContainer> EntitiesDictionary;
 
         List<Type> Components;
         List<Type> Exceptions;
+
+        int group_per_instance; // сколько групп ссылается на данную ссылку
 
         long hash_code_components;
         long hash_code_exceptions;
@@ -137,26 +125,22 @@ namespace RangerV
 
         private Group(List<Type> Components, List<Type> Exceptions)
         {
-            if (Components == null) 
+            if (Components == null)
                 Debug.LogError("при создании группы, лист Components пуст");
             if (Exceptions == null)
                 Debug.LogError("при создании группы, лист Exceptions пуст");
 
-            EntitiesDictionary = new Dictionary<int, EntContainer>();
-
-            //Entities = new List<int>();
             entities_count = 0;
-
+            group_per_instance = 1;
             this.Components = Components;
             this.Exceptions = Exceptions;
-
-            if (Components == null)
-                Debug.LogWarning("Components == null");
 
             for (int i = 0; i < Components.Count; i++)
                 hash_code_components += Components[i].GetHashCode();
             for (int i = 0; i < Exceptions.Count; i++)
                 hash_code_exceptions += Exceptions[i].GetHashCode();
+
+
         }
 
         void AddEntity(int entity)
@@ -178,6 +162,7 @@ namespace RangerV
             List<Type> componentsTypes = new List<Type>(Components.Count);
             for (int i = 0; i < Components.Count; i++)
                 componentsTypes.Add(Components[i]);
+
             return componentsTypes;
         }
 
@@ -186,16 +171,19 @@ namespace RangerV
             List<Type> exceptionsTypes = new List<Type>(Exceptions.Count);
             for (int i = 0; i < Exceptions.Count; i++)
                 exceptionsTypes.Add(Exceptions[i]);
+
             return exceptionsTypes;
         }
 
-        void InitDictionary() // переименовать на InitDictionary
+        void InitDictionary()
         {
             int length = EntityBase.entity_count;
 
+            EntitiesDictionary = new Dictionary<int, EntContainer>();
+
             for (int ent = 0; ent < length; ent++)
             {
-                EntitiesDictionary.Add(ent, new EntContainer());
+                EntitiesDictionary.Add(ent, EntContainer.Empty);
 
                 if (EntityBase.GetEntity(ent) != null)
                 {
@@ -219,7 +207,8 @@ namespace RangerV
 
         void InitEvents()
         {
-            EntityBase.OnCreateEntityID += OnCreateNewEntityID;
+            EntityBase.OnBeforeAddComponents += OnCreateNewEntityID;
+
 
             for (int comp = 0; comp < Components.Count; comp++)
             {
@@ -234,23 +223,28 @@ namespace RangerV
             }
         }
 
+
         void FinalEvents()
         {
-            EntityBase.OnCreateEntityID -= OnCreateNewEntityID;
+            EntityBase.OnBeforeAddComponents -= OnCreateNewEntityID;
 
-            if (Components == null)
-                Debug.Log("Components == null");
-
-            for (int comp = 0; comp < Components.Count; comp++)
+            if (Components != null)
             {
-                Storage.GetStorage(Components[comp]).OnAdd -= OnAddComponent;
-                Storage.GetStorage(Components[comp]).OnRemove -= OnRemoveComponent;
+                for (int comp = 0; comp < Components.Count; comp++)
+                {
+                    Storage.GetStorage(Components[comp]).OnAdd -= OnAddComponent;
+                    Storage.GetStorage(Components[comp]).OnRemove -= OnRemoveComponent;
+                }
             }
 
-            for (int exceptions = 0; exceptions < Exceptions.Count; exceptions++)
+
+            if (Exceptions != null)
             {
-                Storage.GetStorage(Exceptions[exceptions]).OnAdd -= OnAddException;
-                Storage.GetStorage(Exceptions[exceptions]).OnRemove -= OnRemoveException;
+                for (int exceptions = 0; exceptions < Exceptions.Count; exceptions++)
+                {
+                    Storage.GetStorage(Exceptions[exceptions]).OnAdd -= OnAddException;
+                    Storage.GetStorage(Exceptions[exceptions]).OnRemove -= OnRemoveException;
+                }
             }
         }
 
@@ -259,18 +253,25 @@ namespace RangerV
             if (!EntitiesDictionary.ContainsKey(entity))
             {
                 EntitiesDictionary.Add(entity, null);
-                //Debug.Log("в библиотеку " + GetHashCode() + " добавлена сущность " + entity);
             }
 
             EntContainer entContainer = new EntContainer(entity, Components.Count);
 
             for (int comp = 0; comp < Components.Count; comp++)
                 if (Storage.ContainsComponent(Components[comp], entity))
+                {
+                    Debug.LogWarning("При добавлении сущности в группу, на ней не должны находится компоненты, " +
+                        "по идее. сейчас находятся. работа продолжится в штатном режиме");
                     entContainer.remains_components--;
+                }
 
             for (int exc = 0; exc < Exceptions.Count; exc++)
                 if (Storage.ContainsComponent(Exceptions[exc], entity))
+                {
+                    Debug.LogWarning("При добавлении сущности в группу, на ней не должны находится компоненты, " +
+                        "по идее. сейчас находятся. работа продолжится в штатном режиме");
                     entContainer.remains_exceptions++;
+                }
 
             EntitiesDictionary[entity] = entContainer;
 
@@ -308,14 +309,21 @@ namespace RangerV
                 AddEntity(ent);
         }
 
+        ///пользоваться осторожно
         public void Delete() // функция, которая обнуляет группу
         {
+            if (group_per_instance != 1)
+                Debug.LogWarning("На данную группу ссылаются и из других мест. Ее удаление в данном случае не рекомендуется");
+            DeleteBase();
+        }
+
+        void DeleteBase()
+        {
             // придумать что делать если на одну группу ссылаются несколько ссылок
-            /*FinalEvents();
-            Entities = null;
+            FinalEvents();
             Components = Exceptions = null;
             hash_code_components = hash_code_exceptions = 0;
-            groups.Remove(this);*/
+            groups.Remove(this);
         }
 
         public bool Contains(int entity)
@@ -338,9 +346,11 @@ namespace RangerV
 
         public IEnumerator<int> GetEnumerator()
         {
-            foreach (EntContainer ent in EntitiesDictionary.Values)
-                if (ent.was_added)
-                    yield return ent.entity;
+            EntContainer[] array = EntitiesDictionary.Values.ToArray();
+
+            for (int i = 0; i < array.Length; i++)
+                if (array[i].was_added)
+                    yield return array[i].entity;
         }
 
         #endregion Equals/HashCode/Enumerator
@@ -354,7 +364,9 @@ namespace RangerV
             public bool was_added; // была ли сущность добавлена в группу
             int start_num_of_remains_components;
 
-            public EntContainer() : this(-1, -1) { }
+            public static EntContainer Empty { get => new EntContainer(); }
+
+            EntContainer() : this(-2, -2) { }
 
             public EntContainer(int entity, int num_of_components)
             {
@@ -378,23 +390,22 @@ namespace RangerV
 
             public void Zeroing()
             {
-                Zeroing(-1);
-            }
-
-            public void Zeroing(int entity) // зачем?
-            {
                 remains_components = start_num_of_remains_components;
                 remains_exceptions = 0;
                 entity = -1;
                 was_added = false;
             }
 
+            public static explicit operator int(EntContainer container)
+            {
+                return container.entity;
+            }
         }
     }
 
     #region ComponentsList
 
-    public class ComponentsList 
+    public class ComponentsList
     {
         public List<Type> types;
         public ComponentsList Empty { get => new ComponentsList(); }
@@ -405,12 +416,11 @@ namespace RangerV
         }
     }
 
-    public class ComponentsList<T1> : ComponentsList 
+    public class ComponentsList<T1> : ComponentsList
                                         where T1 : ComponentBase, IComponent, new()
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
             types = new List<Type>
             {
                 typeof(T1)
@@ -424,8 +434,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -441,9 +449,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
-            Storage.Init<T3>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -461,10 +466,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
-            Storage.Init<T3>();
-            Storage.Init<T4>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -484,11 +485,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
-            Storage.Init<T3>();
-            Storage.Init<T4>();
-            Storage.Init<T5>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -510,12 +506,6 @@ namespace RangerV
     {
         public ComponentsList()
         {
-            Storage.Init<T1>();
-            Storage.Init<T2>();
-            Storage.Init<T3>();
-            Storage.Init<T4>();
-            Storage.Init<T5>();
-            Storage.Init<T6>();
             types = new List<Type>
             {
                 typeof(T1),
@@ -529,6 +519,4 @@ namespace RangerV
     }
 
     #endregion ComponentsList
-
-
 }

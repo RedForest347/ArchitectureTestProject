@@ -19,31 +19,14 @@ namespace RangerV
         protected static Dictionary<Type, Storage> StorageDictionary = new Dictionary<Type, Storage>();
 
         /// <summary>
-        ///костыльная функция, которая вызывает инициализацию Storage<ComponentType>
-        ///крайне не рекомендуется к использованию и надлежит ее заменить
-        ///вызывается в случае если вызывается функция TryAddGroup(Type componentType, GroupBase group),
-        ///где componentType - тип, который некода ранее не использовался и не инициализировался в Storage,
-        ///т.е.если через код вызвать Storage.TryAddGroup(typeof(какойто левый компонент, который используется впервые и нигде не объявлялся))
-        ///при нормальных условиях вызываться не должна
+        ///функция, которая вызывается в метсах, в которых может происходить доступ к еще не инициализированному Storage<ComponentType>
+        ///костыль, но помогает не париться с поиском и отслеживанием случаев неинициализированного Storage<ComponentType>
         /// </summary>
         /// <param name="ComponentType"></param>
         static void InitStorage(Type ComponentType)
         {
-            Debug.Log("true name = " + typeof(Storage<HealthComponent>));
-            Debug.Log("cur name = " + Type.GetType("RangerV.Storage`1[" + ComponentType + "]"));
-
-            Activator.CreateInstance(Type.GetType("RangerV.Storage`1[" + ComponentType + "]"));
+            Activator.CreateInstance(Type.GetType(typeof(Storage).Namespace + ".Storage`1[" + ComponentType + "]"));
         }
-
-        /// <summary>
-        /// функция нужна для проверки наличия компонента в StorageDictionary и, при его отсутствии, инициализации Storage<> для данного типа компонентов
-        /// </summary>
-        /*static Storage GetStorage(Type componentType)
-        {
-            if (!StorageDictionary.ContainsKey(componentType))
-                InitStorage(componentType);
-            return StorageDictionary[componentType];
-        }*/
 
         public static T GetComponent<T>(int entity) where T : ComponentBase, IComponent, new()
         {
@@ -91,17 +74,6 @@ namespace RangerV
                 InitStorage(componentBase.GetType());
 
             return StorageDictionary[componentBase.GetType()].Add(componentBase, entity);
-        }
-
-        /*public static void AddToAllStorages(List<ComponentBase> Components, int entity)
-        {
-            for (int i = 0; i < Components.Count; i++)
-                GetStorage(Components[i].GetType()).Add(Components[i], entity);
-        }*/
-
-        public static void Init<T>() where T : ComponentBase, IComponent, new()
-        {
-            Storage<T>.Nothing();
         }
 
         public static void RemoveFromAllStorages(int entity)
@@ -188,6 +160,7 @@ namespace RangerV
         public static void Nothing()
         {
             /*нужна для инициализации Storage если ее еще не было (например, в случае добавления исключений)*/
+            //уже не нужна
         }
 
         protected override ComponentBase GetComponent(int entity)
@@ -200,14 +173,9 @@ namespace RangerV
             if (entityData[entity].have_component)
                 Debug.LogWarning("сущность " + entity + " уже имеет компонент " + (T)component + ". он будет перезаписан");
 
-
             entityData[entity] = new EntityData.entityData(true, (T)component);
-
-            //Debug.Log("к сущности " + entity + " добавлен компонент " + (T)component/* + " в Storage " + typeof(T)*/);
             OnAdd?.Invoke(entity);
-            //Debug.Log("у сущности " + entity + " добавился компонент " + typeof(T));
 
-            //Group.AddToGroups(entity);
             return true;
         }
 
@@ -216,9 +184,8 @@ namespace RangerV
             if (!entityData[entity].have_component)
                 return;
 
-            OnRemove?.Invoke(entity);
-
             entityData[entity].SetDefault();
+            OnRemove?.Invoke(entity);
         }
     }
 }

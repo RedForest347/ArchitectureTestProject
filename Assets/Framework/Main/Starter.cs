@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace RangerV
 {
+
     // В Starter выполняется главный Awake сцены. В Awake сначала создается ManagerUpdate, после происходит добавление processing'ов в GSS словарь
     // (происходит это в StarterSetup, переопределенном в специальном классе унаследованном от Starter). 
     // При добавлении в GSS словарь, на processing"е выполняется метод OnAwake (при наличии интерфейса IAwake).
@@ -15,27 +17,42 @@ namespace RangerV
     //
     //
 
-
     public class Starter : MonoBehaviour        
     {
         public static bool initialized;
 
         private void Awake()
         {
-            //Storage.CleanStorage();
-
-            ManagerUpdate.Create();
+            ManagerUpdate.Init();
+            GlobalSystemStorage.Init();
             StarterSetup();
             initialized = true;
-            Debug.Log("initialized:   " + initialized);
-
             EntitiesInitializing();
-            GlobalSystemStorage.InstanceGSS.StartProcessings();
+            GlobalSystemStorage.Instance.StartProcessings();
+
+            Debug.Log("initialized:   " + initialized);
+        }
+
+        private void OnEnable()
+        {
+            if (!initialized)
+                OnRebuild();
+        }
+
+        void OnRebuild()
+        {
+            ManagerUpdate.Init();
+            GlobalSystemStorage.Init();
+            StarterSetup();
+            initialized = true;
+
+            GlobalSystemStorage.Instance.StartProcessings();
+            Debug.LogWarning("Произошел ребилд. При возникновении багов, опишите проблему и обратитесь ко мне");
         }
 
         void EntitiesInitializing()
-        {        
-            var objs = FindObjectsOfType<EntityBase>();
+        {
+            EntityBase[] objs = FindObjectsOfType<EntityBase>();
             for (int i = 0; i < objs.Length; i++)
             {
                 if (objs[i].state.requireStarter)
@@ -43,15 +60,49 @@ namespace RangerV
             }
         }
 
+        void EntitiesDeinitializing()
+        {
+            for (int entity = 0; entity < EntityBase.entity_count; entity++)
+                if (EntityBase.ContainsEntity(entity))
+                    Destroy(EntityBase.GetEntity(entity));
+        }
+
         /// <summary>
         /// Setup стартера уровня. В стартере уровня выполняется добавление processing'ов в GSS
         /// </summary>
         public virtual void StarterSetup() { }
 
-        protected virtual void OnDestroy()
+        private void OnApplicationQuit()
         {
-            initialized = false; 
-            Debug.Log("initialized:   " + initialized);
+            ClearSceneOnQuit();
+        }
+
+        private void OnDisable()
+        {
+            ClearScene();
+        }
+
+        void ClearScene()
+        {
+            if (!initialized)
+                return;
+
+            ManagerUpdate.Clear();
+            GlobalSystemStorage.StopProcessings();
+            Group.Clear();
+            initialized = false;
+        }
+
+        void ClearSceneOnQuit()
+        {
+            if (!initialized)
+                return;
+
+            EntitiesDeinitializing();
+            ManagerUpdate.Clear();
+            GlobalSystemStorage.StopProcessings();
+            Group.Clear();
+            initialized = false;
         }
     }
 }

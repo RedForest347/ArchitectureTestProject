@@ -10,15 +10,12 @@ public class ColisionDamageProcessing : ProcessingBase, ICustomUpdate, ICustomSt
 
     public void OnStart()
     {
-        /*foreach (int entity in collision_group)
-        {
-            Storage.GetComponent<CollisionComponent>(entity).AddOnTriggerAction(GiveDamage, CollisionActionType.Enter, GameObject.Find("EaglePlayer").GetComponent<Collider>());
-        }*/
         collision_group.OnAddEntity += DDD;
     }
+
     void DDD(int entity)
     {
-
+        //Debug.Log("DDD");
         Storage.GetComponent<CollisionComponent>(entity).AddOnTriggerAction(GiveDamage, CollisionActionType.Enter, GameObject.Find("EaglePlayer").GetComponent<Collider>());
 
     }
@@ -26,10 +23,7 @@ public class ColisionDamageProcessing : ProcessingBase, ICustomUpdate, ICustomSt
 
     public void CustomUpdate()
     {
-        /*foreach (int entity in collision_group)
-        {
-            Storage.GetComponent<CollisionComponent>(entity).AddOnTriggerAction(GiveDamage, CollisionActionType.Enter, GameObject.Find("EaglePlayer").GetComponent<Collider>());
-        }*/
+
     }
 
 
@@ -43,8 +37,12 @@ public class ColisionDamageProcessing : ProcessingBase, ICustomUpdate, ICustomSt
             healthComponent.health -= 5;
             if (healthComponent.health <= 0)
                 GameObject.Destroy(Storage.GetComponent<GameObjectComponent>(target_entity).GameObject);
+
             if (Storage.GetComponent<CollisionDamageComponent>(entity).destroy_on_collision)
+            {
+                //Debug.Log("Storage.GetComponent<GameObjectComponent>(entity) = " + Storage.GetComponent<GameObjectComponent>(entity));
                 GameObject.Destroy(Storage.GetComponent<GameObjectComponent>(entity).GameObject);
+            }
         }
     }
 

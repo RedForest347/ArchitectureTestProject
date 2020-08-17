@@ -10,20 +10,21 @@ namespace RangerV
     /// </summary>
     public abstract class EntityBase : MonoBehaviour
     {
-        public static event Action<int> OnCreateEntity;
         public static event Action<int> OnCreateEntityID;
-
+        public static event Action<int> OnBeforeAddComponents;
         public static event Action<int> OnDestroyEntity;
-        
+        public static event Action<int> OnActivateEntity;
 
+
+        static EntityBase[] Entities { get => EntityBaseData.Instance.Entities; }
+        static Stack<int> freeID { get => EntityBaseData.Instance.freeID; }
+        static int nextMax { get => EntityBaseData.Instance.nextMax; set => EntityBaseData.Instance.nextMax = value; } 
 
         /// <summary>
         /// нулевой элемент не должен быть занят
         /// </summary>
-        static EntityBase[] Entities = new EntityBase[50];
-        static Stack<int> freeID = new Stack<int>(25);
-        static int nextMax = 1;
-        public static int entity_count { get => nextMax; }
+
+        public static int entity_count { get => EntityBaseData.Instance.nextMax; }
 
         public int entity;
 
@@ -36,7 +37,12 @@ namespace RangerV
             return Entities[entity];
         }
 
-        //разобрать причинно-следственные связи
+        public static bool ContainsEntity(int entity)
+        {
+            return Entities[entity] != null;
+        }
+
+        //разобрать причинно-следственные связи //устарело
         /// <summary>
         /// ----------до----------
         /// 
@@ -94,9 +100,9 @@ namespace RangerV
         /// </summary>
         public void Awake()
         {
+            //Debug.Log("Awake");
             state.runtime = true;
-            CreateEntityID(this);
-            OnCreateEntity?.Invoke(entity);
+            CreateEntityID();
 
             if (!Starter.initialized)
                 state.requireStarter = true;
@@ -106,17 +112,27 @@ namespace RangerV
 
         private void OnEnable()
         {
-            
             if (state.requireStarter)
                 return;
             if (state.enabled)
                 return;
 
-            //Debug.Log("Enable " + entity);
-
             state.enabled = true;
-            OnActivate();
-            Debug.Log("entity " + entity + " --active--");
+
+            Entities[entity] = this;
+
+            OnBeforeAddComponents?.Invoke(entity);
+
+            for (int i = 0; i < Components.Count; i++)
+            {
+                if (Components[i] is ICustomAwake)
+                    ((ICustomAwake)Components[i]).OnAwake();
+
+                ManagerUpdate.Instance.AddTo(Components[i]);
+                Storage.AddComponent(Components[i], entity);
+            }
+
+            OnActivateEntity?.Invoke(entity);
         }
 
         private void OnDisable()
@@ -128,28 +144,20 @@ namespace RangerV
         {
             state.runtime = false;
             freeID.Push(entity);
-            Entities[entity] = null;
             entity = -1;
-        }
-
-        void OnActivate()
-        {
-            for (int i = 0; i < Components.Count; i++)
-                Storage.AddComponent(Components[i], entity);
-            //Group.UpdateInGroups(entity);
-            //OnCreateEntity(entity);
         }
 
         public void OnDeactivate()
         {
-            OnDestroyEntity?.Invoke(entity);
+            
             state.enabled = false;
-            ManagerUpdate.InstanceManagerUpdate.RemoveFrom(this);
+            ManagerUpdate.Instance.RemoveFrom(this);
             Storage.RemoveFromAllStorages(entity);
-            //Group.RemoveFromAllGroups(entity);
-        }
 
-        
+            Entities[entity] = null;///
+
+            OnDestroyEntity?.Invoke(entity);
+        }
 
 
         #region MAIN
@@ -158,28 +166,23 @@ namespace RangerV
         public void SetupAfterStarter()
         {
             state.requireStarter = false;
-            /*for (int i = 0; i < Components.Count; i++)
-                AddFromStartList(Components[i]);*/
-            
-            
             OnEnable();
             Setup();
             state.initialized = true;
         }
 
-
-        void CreateEntityID(EntityBase entityBase)
+        void CreateEntityID()
         {
             if (Entities.Length <= nextMax)
-                Array.Resize(ref Entities, Entities.Length + 10);
+                Array.Resize(ref EntityBaseData.Instance.Entities, Entities.Length + 10);
 
             if (freeID.Count > 0)
-                entityBase.entity = freeID.Pop();
+                entity = freeID.Pop();
             else
-                entityBase.entity = nextMax++;
+                entity = nextMax++;
 
-            Entities[entityBase.entity] = entityBase;
-            OnCreateEntityID?.Invoke(entityBase.entity);
+            Entities[entity] = this;
+            OnCreateEntityID?.Invoke(entity);
         }
 
         #endregion MAIN
@@ -204,18 +207,20 @@ namespace RangerV
 
             if (Storage.ContainsComponent(componentType, entity))
             {
-                Debug.LogError("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity);
-                return null; // или компонент, который уже существует
+                Debug.LogWarning("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity + " (" + EntityBase.GetEntity(entity).gameObject.name + ")." + " компонент добавлен не будет");
+                return null;
             }
 
             ComponentBase component = (ComponentBase)gameObject.AddComponent(componentType);
 
-            if ((component as ICustomAwake) != null)
-                (component as ICustomAwake).OnAwake();
+            if (component is ICustomAwake)
+                ((ICustomAwake)component).OnAwake();
+
+            ManagerUpdate.Instance.AddTo(component);
 
             Components.Add(component);
             Storage.AddComponent(component, entity);
-            //Group.UpdateInGroups(entity);
+            
             return component;
         }
 
@@ -237,18 +242,6 @@ namespace RangerV
             return _component;
         }
 
-
-        void AddFromStartList(ComponentBase component)
-        {
-            if (Storage.ContainsComponent(component.GetType(), entity))
-                return;
-
-            if ((component as ICustomAwake) != null)
-                (component as ICustomAwake).OnAwake();
-
-            Storage.AddComponent(component, entity);
-        }
-
         public bool RemoveComponent<T>() where T : ComponentBase, IComponent, new()
         {
             if (!state.runtime)
@@ -258,9 +251,7 @@ namespace RangerV
                 return false;
 
             Destroy(GetEntityComponent<T>());
-            //Storage<T>.StorageForType.Remove(entity);
-            Storage.RemoveComponent<T>(entity); //багs
-            //Group.UpdateInGroups(entity);
+            Storage.RemoveComponent<T>(entity);
             RemoveComponentFromLists(typeof(T));
             return true;
         }
@@ -275,7 +266,6 @@ namespace RangerV
 
             Destroy(GetEntityComponent(componentType));
             Storage.RemoveComponent(componentType, entity);
-            //Group.UpdateInGroups(entity);
             RemoveComponentFromLists(componentType);
             return true;
         }
@@ -313,7 +303,7 @@ namespace RangerV
             return -1;
         }
 
-        #endregion
+        #endregion ADD/REMOVE
 
         #region GetComponent
 
@@ -351,5 +341,33 @@ namespace RangerV
 
         public virtual void Setup() { }
 
+
+
+
+    }
+
+    /// <summary>
+    /// костыль. его суть - хранить статическую дату для  EntityBase в нестатическом виде для нормального
+    /// восстановления после ребилдинга. хорошо бы переделать в более правильный вид
+    /// </summary>
+    public class EntityBaseData : MonoBehaviour
+    {
+        public static EntityBaseData Instance { get => Singleton<EntityBaseData>.Instance; }
+
+        public EntityBase[] Entities;
+        public Stack<int> freeID;
+        public int nextMax;
+
+        EntityBaseData()
+        {
+            Entities = new EntityBase[10];
+            nextMax = 1;
+            freeID = new Stack<int>(25);
+        }
+
+        private void OnDestroy()
+        {
+            Debug.Log("EntityBaseData destroyed");
+        }
     }
 }

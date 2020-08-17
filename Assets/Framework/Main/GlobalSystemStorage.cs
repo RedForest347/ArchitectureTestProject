@@ -5,20 +5,25 @@ using UnityEngine;
 
 namespace RangerV
 {
-    public class GlobalSystemStorage
+    public class GlobalSystemStorage : MonoBehaviour
     {
-        public static GlobalSystemStorage InstanceGSS = new GlobalSystemStorage();
-        Dictionary<Type, ProcessingBase> InstanceProcessings = new Dictionary<Type, ProcessingBase>();
+        public static GlobalSystemStorage Instance { get => Singleton<GlobalSystemStorage>.Instance; }
+        Dictionary<Type, ProcessingBase> Processings;
 
+
+        public static void Init()
+        {
+            Instance.Processings = new Dictionary<Type, ProcessingBase>();
+        }
 
         public static T Add<T>() where T : ProcessingBase, new()
         {
-            T processing = new T();
-            InstanceGSS.InstanceProcessings.Add(typeof(T), processing);
+            T processing = new T(); 
+            Instance.Processings.Add(typeof(T), processing);
 
             if (processing is ICustomAwake)
                 (processing as ICustomAwake).OnAwake();   
-            ManagerUpdate.InstanceManagerUpdate.AddTo(processing);
+            ManagerUpdate.Instance.AddTo(processing);
 
             return processing;
         }
@@ -26,31 +31,37 @@ namespace RangerV
         public static T Get<T>() where T : ProcessingBase
         {
             ProcessingBase resolve;
-            InstanceGSS.InstanceProcessings.TryGetValue(typeof(T), out resolve);
+            Instance.Processings.TryGetValue(typeof(T), out resolve);
             return (T)resolve;
         }
 
-        //public static bool TryGet(Type t, out object resolve)
-        //{
-        //    bool b;
-        //    b = InstanceGSS.InstanceProcessings.TryGetValue(t, out resolve);
-        //    return b;
-        //}
-
         public void StartProcessings()
         {
-            ProcessingBase[] values = new ProcessingBase[InstanceProcessings.Count];
-            InstanceProcessings.Values.CopyTo(values, 0);
-            for (int i = 0; i < InstanceProcessings.Count; i++)
+            ProcessingBase[] values = new ProcessingBase[Processings.Count];
+            Processings.Values.CopyTo(values, 0);
+
+            for (int i = 0; i < Processings.Count; i++)
             {
                 if(values[i] is ICustomStart)
                     (values[i] as ICustomStart).OnStart();
             }
         }
 
-        public void ClearScene()
+        public static void StopProcessings()
         {
+            Dictionary<Type, ProcessingBase> processings = Instance.Processings;
+            ProcessingBase[] values = new ProcessingBase[processings.Count];/// 
+            processings.Values.CopyTo(values, 0);
+            for (int i = 0; i < processings.Count; i++)
+                if (values[i] is ICustomDisable)
+                    (values[i] as ICustomDisable).OnDisable();
 
+            processings = new Dictionary<Type, ProcessingBase>();
+        }
+
+        private void OnDestroy()
+        {
+            Debug.Log("GlobalSystemStorage destroyed");
         }
     }
 }
