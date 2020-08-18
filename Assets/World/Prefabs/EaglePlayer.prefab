@@ -484,7 +484,7 @@ MonoBehaviour:
     requireStarter: 0
     initialized: 0
     runtime: 0
-  show_comp: 000100
+  show_comp: 000000
 --- !u!114 &4173086781450886460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -514,7 +514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ammo: 1000
-  cooldown: 1
+  cooldown: 0.1
   AmmoPrefab: {fileID: 1711683689483686726, guid: 26da0e443c19f6743aa9a5a0059338df,
     type: 3}
 --- !u!114 &6628521689067079317
@@ -1053,7 +1053,7 @@ MonoBehaviour:
     requireStarter: 0
     initialized: 0
     runtime: 0
-  show_comp: 000000
+  show_comp: 010000
 --- !u!114 &2379220874257606500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1083,7 +1083,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ammo: 1000
-  cooldown: 1
+  cooldown: 0.1
   AmmoPrefab: {fileID: 1711683689483686726, guid: 26da0e443c19f6743aa9a5a0059338df,
     type: 3}
 --- !u!114 &7330420335181894432
