@@ -1,5 +1,8 @@
-﻿using System;
+﻿#if DEBUG
 using UnityEditor;
+#endif
+
+using System;
 using UnityEngine;
 
 namespace RangerV
@@ -24,12 +27,16 @@ namespace RangerV
         public ComponentAttribute(string path, string unity_editor_icon)
         {
             this.path = path;
+#if DEBUG
             this.icon = EditorGUIUtility.IconContent(unity_editor_icon).image;
+#endif
         }
         public ComponentAttribute(string path)
         {
             this.path = path;
+#if DEBUG
             this.icon = EditorGUIUtility.IconContent("dll Script Icon").image;
+#endif
         }
         public string GetPath()
         {

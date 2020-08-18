@@ -3,10 +3,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static RangerV.ThreadManager;
 using Stopwatch = System.Diagnostics.Stopwatch;
-using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 
 public class Test : MonoBehaviour
 {

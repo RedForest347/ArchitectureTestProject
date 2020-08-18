@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 
 namespace RangerV
 {
@@ -47,7 +47,7 @@ namespace RangerV
             initialized = true;
 
             GlobalSystemStorage.Instance.StartProcessings();
-            Debug.LogWarning("Произошел ребилд. При возникновении багов, опишите проблему и обратитесь ко мне");
+            Debug.LogWarning("Произошел ребилд. При возникновении багов, опишите проблему и обратитесь к разработчику");
         }
 
         void EntitiesInitializing()

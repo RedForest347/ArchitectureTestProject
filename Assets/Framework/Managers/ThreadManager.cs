@@ -57,7 +57,8 @@ namespace RangerV
         public void OnAwake()
         {
             Init();
-            Debug.Log("ThreadManager init");
+            //Debug.Log("ThreadManager init");
+
         }
 
         public void CustomUpdate()

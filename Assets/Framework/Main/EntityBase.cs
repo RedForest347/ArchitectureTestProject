@@ -118,9 +118,7 @@ namespace RangerV
                 return;
 
             state.enabled = true;
-
             Entities[entity] = this;
-
             OnBeforeAddComponents?.Invoke(entity);
 
             for (int i = 0; i < Components.Count; i++)
@@ -363,11 +361,6 @@ namespace RangerV
             Entities = new EntityBase[10];
             nextMax = 1;
             freeID = new Stack<int>(25);
-        }
-
-        private void OnDestroy()
-        {
-            Debug.Log("EntityBaseData destroyed");
         }
     }
 }

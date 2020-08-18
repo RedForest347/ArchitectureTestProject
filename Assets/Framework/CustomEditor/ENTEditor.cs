@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿#if DEBUG
+
+using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine;
+
 using System.Reflection;
 using System;
 using System.Linq;
@@ -723,17 +726,27 @@ namespace RangerV
                                                  : (add_component_list[i].GetCustomAttribute<ComponentAttribute>() == null))
                     {
                         string menuPath = "";
-                        if (with_component_attribute) menuPath = add_component_list[i].GetCustomAttribute<ComponentAttribute>().GetPath();
-                        else menuPath = add_component_list[i].Name;
+
+                        if (with_component_attribute) 
+                            menuPath = add_component_list[i].GetCustomAttribute<ComponentAttribute>().GetPath();
+                        else 
+                            menuPath = add_component_list[i].Name;
+
                         bool set = false;
-                        if (selected_object.Components.Where(componentBase => componentBase.GetType() == add_component_list[i]).ToList().Count != 0) set = true;
-                        if (set) dropdownMenu.AddItem(new GUIContent(menuPath), set, RemoveItem, add_component_list[i]);
-                        else dropdownMenu.AddItem(new GUIContent(menuPath), set, AddItem, add_component_list[i]);
+
+                        if (selected_object.Components.Where(componentBase => componentBase.GetType() == add_component_list[i]).ToList().Count != 0) 
+                            set = true;
+
+                        if (set) 
+                            dropdownMenu.AddItem(new GUIContent(menuPath), set, RemoveItem, add_component_list[i]);
+                        else 
+                            dropdownMenu.AddItem(new GUIContent(menuPath), set, AddItem, add_component_list[i]);
                     }
                 }
             }
 
         }
+
         void AddItem(object componentType)
         {
             if (componentType != null)
@@ -743,6 +756,7 @@ namespace RangerV
                 //selected_object.Components.Add(comp as ComponentBase);
                 selected_object.Add((Type)componentType);
                 selected_object.show_comp.Add(false);
+                ApplyPrefab();
             }
         }
 
@@ -753,12 +767,20 @@ namespace RangerV
             //selected_object.Components.RemoveAt(index);
             selected_object.RemoveComponent(selected_object.Components[index].GetType());
             selected_object.show_comp.RemoveAt(index);
+            ApplyPrefab();
         }
         void RemoveItem(object type)
         {
             for (int index = 0; index < selected_object.Components.Count; index++)
                 if (selected_object.Components[index].GetType() == (Type)type)
                     RemoveItem(index);
+
+            ApplyPrefab();
+        }
+
+        void ApplyPrefab()
+        {
+            PrefabUtility.ApplyPrefabInstance(selected_gameObject, InteractionMode.AutomatedAction); // сделать корректную отмену добавления/удаления компонентов
         }
 
         void ShowComponentFields(ComponentBase component, int index)
@@ -814,3 +836,7 @@ namespace RangerV
     #endregion
 
 }
+
+
+
+#endif
