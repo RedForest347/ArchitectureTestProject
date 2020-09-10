@@ -6,3 +6,4 @@ Dictionary и event
 4)	для ComponentBase сделать CustomStart и CustomAwake в положенные времена (сделать OnFirstEnable и к AddComponent)
 5)	удаление синглтонов при остановке сцены (сложное, отложено) -
 6) Custom Editor (папка, что то в ней) не дает скомпилироваться проекту + (EntityGUIeditorSettings.asset), удалено +
+DDD

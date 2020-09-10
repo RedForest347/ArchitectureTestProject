@@ -98,16 +98,16 @@ public class TestAllSystem : MonoBehaviour
         if (ent2.GetComponent<TestEntity2>().GetAllComponents().Count != 4)
             SendErrorMessage("Неправильное добавление компонентов");
 
-        ent2.GetComponent<EntityBase>().RemoveComponent<CompTest2>();
+        ent2.GetComponent<EntityBase>().RemoveCmp<CompTest2>();
         if (group5.entities_count != 3)
             SendErrorMessage("Некорректное поведение групп при удалении компонента");
-        ent2.GetComponent<EntityBase>().Add<CompTest2>();
+        ent2.GetComponent<EntityBase>().AddCmp<CompTest2>();
 
 
-        ent1.GetComponent<EntityBase>().Add<CompTest2>();
+        ent1.GetComponent<EntityBase>().AddCmp<CompTest2>();
         if (group1.entities_count != 3)
             SendErrorMessage("Некорректное поведение групп при добавлении компонента");
-        ent1.GetComponent<EntityBase>().RemoveComponent<CompTest2>();
+        ent1.GetComponent<EntityBase>().RemoveCmp<CompTest2>();
 
         GameObject ent4 = new GameObject();
         gameObjects.Add(ent4);
@@ -124,7 +124,7 @@ public class TestAllSystem : MonoBehaviour
         if (group5.entities_count != 4)
             SendErrorMessage("Неправильное количество сущностей в группе");
 
-        ent1.GetComponent<TestEntity1>().RemoveComponent(typeof(CompTest1));
+        ent1.GetComponent<TestEntity1>().RemoveCmp(typeof(CompTest1));
         if (ent1.GetComponent<TestEntity1>().GetEntityComponent<CompTest1>() != null)
             SendErrorMessage("Некорректное удаление компонента");
 
@@ -339,8 +339,8 @@ public class TestAllSystem : MonoBehaviour
 
             for (int i = 0; i < difficult; i++)
             {
-                entityBase.RemoveComponent<CompTest1>();
-                entityBase.Add<CompTest1>();
+                entityBase.RemoveCmp<CompTest1>();
+                entityBase.AddCmp<CompTest1>();
             }
 
             long total_time = time.ElapsedMilliseconds;
@@ -361,15 +361,15 @@ public class TestAllSystem : MonoBehaviour
 
             for (int i = 0; i < difficult; i++)
             {
-                entityBase.RemoveComponent<CompTest3>();
-                entityBase.RemoveComponent<CompTest4>();
-                entityBase.RemoveComponent<CompTest5>();
-                entityBase.RemoveComponent<CompTest6>();
+                entityBase.RemoveCmp<CompTest3>();
+                entityBase.RemoveCmp<CompTest4>();
+                entityBase.RemoveCmp<CompTest5>();
+                entityBase.RemoveCmp<CompTest6>();
 
-                entityBase.Add<CompTest3>();
-                entityBase.Add<CompTest4>();
-                entityBase.Add<CompTest5>();
-                entityBase.Add<CompTest6>();
+                entityBase.AddCmp<CompTest3>();
+                entityBase.AddCmp<CompTest4>();
+                entityBase.AddCmp<CompTest5>();
+                entityBase.AddCmp<CompTest6>();
             }
 
             long total_time = time.ElapsedMilliseconds;
@@ -450,10 +450,10 @@ public class TestEntity1 : EntityBase
 {
     public override void Setup()
     {
-        Add<CompTest1>();
-        Add<CompTest1>();
-        Add<CompTest1>();
-        Add<CompTest1>();
+        AddCmp<CompTest1>();
+        AddCmp<CompTest1>();
+        AddCmp<CompTest1>();
+        AddCmp<CompTest1>();
     }
 }
 
@@ -461,10 +461,10 @@ public class TestEntity2 : EntityBase
 {
     public override void Setup()
     {
-        Add<CompTest1>();
-        Add<CompTest2>();
-        Add<CompTest3>();
-        Add<CompTest4>();
+        AddCmp<CompTest1>();
+        AddCmp<CompTest2>();
+        AddCmp<CompTest3>();
+        AddCmp<CompTest4>();
     }
 }
 
@@ -472,10 +472,10 @@ public class TestEntity3 : EntityBase
 {
     public override void Setup()
     {
-        Add<CompTest1>();
-        Add<CompTest2>();
-        Add<CompTest3>();
-        Add<CompTest4>();
+        AddCmp<CompTest1>();
+        AddCmp<CompTest2>();
+        AddCmp<CompTest3>();
+        AddCmp<CompTest4>();
     }
 }
 
@@ -483,13 +483,13 @@ public class TestEntity4 : EntityBase
 {
     public override void Setup()
     {
-        Add<CompTest1>();
-        Add<CompTest2>();
-        Add<CompTest3>();
-        Add<CompTest4>();
-        Add<CompTest5>();
-        Add<CompTest6>();
-        Add<CompTest7>();
+        AddCmp<CompTest1>();
+        AddCmp<CompTest2>();
+        AddCmp<CompTest3>();
+        AddCmp<CompTest4>();
+        AddCmp<CompTest5>();
+        AddCmp<CompTest6>();
+        AddCmp<CompTest7>();
     }
 }
 
@@ -497,6 +497,6 @@ public class TestEntity7 : EntityBase
 {
     public override void Setup()
     {
-        Add<CompTest7>();
+        AddCmp<CompTest7>();
     }
 }

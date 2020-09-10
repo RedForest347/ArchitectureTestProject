@@ -31,10 +31,17 @@ namespace RangerV
 
     public interface ICustomDisable
     {
-        void OnDisable();
+        void OnCustomDisable();
     }
 
-    public interface IReceive<T> where T : ISignal, new()
+    public interface IStopStartProc
+    {
+        void Stop();
+
+        void Start();
+    }
+
+    public interface IReceive<T> where T : ISignal, new() // убрать new
     {
         void SignalHandler(T arg);
     }

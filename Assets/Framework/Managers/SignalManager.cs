@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace RangerV
 {
+    /// сделать автоматическое добавление процессинга сюда (мб)
     public class SignalManager<T> where T : ISignal, new()
     {
-        public static SignalManager<T> SignalManagerInstance = new SignalManager<T>();
+        public static SignalManager<T> Instance = new SignalManager<T>();
 
         delegate void SignalHandler(T arg);
         event SignalHandler signalHandler;
@@ -24,10 +22,11 @@ namespace RangerV
 
         public void SendSignal(T arg)
         {
-            if (signalHandler != null)
+            signalHandler?.Invoke(arg);
+            /*if (signalHandler != null)
                 signalHandler(arg);
             else
-                Debug.LogWarning("SignalHandler of " + typeof(T) + " is null");
+                Debug.LogWarning("SignalHandler of " + typeof(T).Name + " is null");*/
         }
 
     }

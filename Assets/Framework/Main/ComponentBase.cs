@@ -16,10 +16,14 @@ namespace RangerV
     /// была идея реализовать использование интерфейса ICustomStart, который будет вызываться каждый раз при 
     /// Enable компонента. при этом, ICustomAwake будет вызываться единожды при инициализации (добавлении) компонента на сущность, 
     /// но пока смысла не вижу. по необходимости есть возможность реализовать данный вариант
+    /// 
+    /// следует именовать [имя_компонента]Cmp
     /// </summary>
     [System.Serializable]
     public class ComponentBase: MonoBehaviour, IComponent
     {
+        int entity;
+        EntityBase entityBase;// добавить
         //public string name;
     }
 }

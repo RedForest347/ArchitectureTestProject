@@ -2,12 +2,21 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Stopwatch = System.Diagnostics.Stopwatch;
+//using NUnit.Framework;
 
 namespace RangerV
 {
+    /// <summary>
+    /// вопрос, как на время отключить процессинг?
+    /// (просто так исключить его из Processings не вариант, т.к. исключение-включение в Dictionary имеет неприятные последствия)
+    /// </summary>
+
     public class GlobalSystemStorage : MonoBehaviour
     {
         public static GlobalSystemStorage Instance { get => Singleton<GlobalSystemStorage>.Instance; }
+        public bool debug_mod = false;
+
         Dictionary<Type, ProcessingBase> Processings;
 
 
@@ -18,12 +27,23 @@ namespace RangerV
 
         public static T Add<T>() where T : ProcessingBase, new()
         {
-            T processing = new T(); 
+            if (Instance.Processings.ContainsKey(typeof(T)))
+            {
+                Debug.LogError("Компонент " + typeof(T).Name + " уже добавлен в GlobalSystemStorage. он не может быть добавлен повторно");
+                return null;
+            }
+
+
+            T processing = new T();
             Instance.Processings.Add(typeof(T), processing);
 
             if (processing is ICustomAwake)
-                (processing as ICustomAwake).OnAwake();   
+                (processing as ICustomAwake).OnAwake();
             ManagerUpdate.Instance.AddTo(processing);
+
+            if (Starter.initialized)
+                if (processing is ICustomStart)
+                    (processing as ICustomStart).OnStart();
 
             return processing;
         }
@@ -42,7 +62,7 @@ namespace RangerV
 
             for (int i = 0; i < Processings.Count; i++)
             {
-                if(values[i] is ICustomStart)
+                if (values[i] is ICustomStart)
                     (values[i] as ICustomStart).OnStart();
             }
         }
@@ -55,7 +75,7 @@ namespace RangerV
 
             for (int i = 0; i < processings.Count; i++)
                 if (values[i] is ICustomDisable)
-                    (values[i] as ICustomDisable).OnDisable();
+                    (values[i] as ICustomDisable).OnCustomDisable();
 
             processings = new Dictionary<Type, ProcessingBase>();
         }

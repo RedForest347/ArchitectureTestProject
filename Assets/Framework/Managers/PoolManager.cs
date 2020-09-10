@@ -236,7 +236,7 @@ namespace RangerV
             {
                 for (int i = 0; i < components.Count; i++)
                     if (!listType.Contains(components[i].GetType()))
-                        entityBase.RemoveComponent(components[i].GetType());
+                        entityBase.RemoveCmp(components[i].GetType());
 
                 //entityBase.GetAllComponents(out components, out componentTypes);
                 

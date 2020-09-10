@@ -1,13 +1,9 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using RangerV;
-using Stopwatch = System.Diagnostics.Stopwatch;
-using System;
+﻿using RangerV;
 
 public class ProcessingExample1 : ProcessingBase, ICustomAwake, ICustomUpdate
 {
     //public Group group = Group.CreateGroup(Group.CreateComponentsList<HealthComponent>());
-    public Group group = Group.Create(new ComponentsList<HealthComponent>());
+    //public Group group = Group.Create(new ComponentsList<HealthComponent>());
 
     public void OnAwake()
     {

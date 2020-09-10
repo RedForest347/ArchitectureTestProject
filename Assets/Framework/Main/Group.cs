@@ -8,6 +8,10 @@ using System.Reflection;
 
 namespace RangerV
 {
+    ///идея: создать метод, который автоматом добавляет заданный метод в OnAddEntity и OnBeforeRemoveEntity и удаляет их, т.е.
+    ///сделать автоматический аналог логики, которая делается при добавлении методов процессинга в евент компонента
+
+
     /// <summary>
     /// создание группы:
     /// Group group = Group.Create(new ComponentsList<SomeComp1, SomeComp2>() -- компоненты, new ComponentsList<SomeComp3, SomeComp4> -- исключения);
@@ -119,7 +123,8 @@ namespace RangerV
         long hash_code_exceptions;
 
         public event Action<int> OnAddEntity;
-        public event Action<int> OnRemoveEntity;
+        //public event Action<int> OnAfterRemoveEntity;
+        public event Action<int> OnBeforeRemoveEntity;
 
         private Group(List<Type> Components) : this(Components, new List<Type>(0)) { }
 
@@ -150,11 +155,28 @@ namespace RangerV
             OnAddEntity?.Invoke(entity);
         }
 
+        /// <summary>
+        /// проверяет нужно ли удалить сущность ent из данной группы
+        /// </summary>
+        /// <param name="ent"></param>
+        void CheckEntityOnRemove(int ent)
+        {
+            if (EntitiesDictionary[ent].was_added)
+            {
+                OnBeforeRemoveEntity?.Invoke(ent);
+                RemoveEntity(ent);
+            }
+        }
+
         void RemoveEntity(int entity)
         {
             EntitiesDictionary[entity].was_added = false;
             entities_count--;
-            OnRemoveEntity?.Invoke(entity);
+
+            if (EntityBase.GetEntity(entity) == null)
+                Debug.Log("EntityBase.GetEntity(entity) == null");
+
+            //OnAfterRemoveEntity?.Invoke(entity);
         }
 
         public List<Type> GetComponentTypes()
@@ -213,13 +235,13 @@ namespace RangerV
             for (int comp = 0; comp < Components.Count; comp++)
             {
                 Storage.GetStorage(Components[comp]).OnAdd += OnAddComponent;
-                Storage.GetStorage(Components[comp]).OnRemove += OnRemoveComponent;
+                Storage.GetStorage(Components[comp]).OnBeforeRemove += OnRemoveComponent;
             }
 
             for (int exceptions = 0; exceptions < Exceptions.Count; exceptions++)
             {
                 Storage.GetStorage(Exceptions[exceptions]).OnAdd += OnAddException;
-                Storage.GetStorage(Exceptions[exceptions]).OnRemove += OnRemoveException;
+                Storage.GetStorage(Exceptions[exceptions]).OnBeforeRemove += OnRemoveException;
             }
         }
 
@@ -233,7 +255,7 @@ namespace RangerV
                 for (int comp = 0; comp < Components.Count; comp++)
                 {
                     Storage.GetStorage(Components[comp]).OnAdd -= OnAddComponent;
-                    Storage.GetStorage(Components[comp]).OnRemove -= OnRemoveComponent;
+                    Storage.GetStorage(Components[comp]).OnBeforeRemove -= OnRemoveComponent;
                 }
             }
 
@@ -243,7 +265,7 @@ namespace RangerV
                 for (int exceptions = 0; exceptions < Exceptions.Count; exceptions++)
                 {
                     Storage.GetStorage(Exceptions[exceptions]).OnAdd -= OnAddException;
-                    Storage.GetStorage(Exceptions[exceptions]).OnRemove -= OnRemoveException;
+                    Storage.GetStorage(Exceptions[exceptions]).OnBeforeRemove -= OnRemoveException;
                 }
             }
         }
@@ -293,14 +315,13 @@ namespace RangerV
         {
             EntitiesDictionary[ent].remains_components++;
 
-            if (EntitiesDictionary[ent].was_added)
-                RemoveEntity(ent);
+            CheckEntityOnRemove(ent);
         }
         void OnAddException(int ent)
         {
             EntitiesDictionary[ent].remains_exceptions++;
-            if (EntitiesDictionary[ent].was_added)
-                RemoveEntity(ent);
+
+            CheckEntityOnRemove(ent);
         }
         void OnRemoveException(int ent)
         {
@@ -326,9 +347,27 @@ namespace RangerV
             groups.Remove(this);
         }
 
+        public int[] GetEntitiesArray()
+        {
+            int[] Entities = new int[entities_count];
+            int next = 0;
+
+            EntContainer[] array = EntitiesDictionary.Values.ToArray();
+
+            for (int i = 0; i < array.Length; i++)
+                if (array[i].was_added)
+                    Entities[next++] = array[i].entity;
+
+            return Entities;
+        }
+
+
         public bool Contains(int entity)
         {
-            return EntitiesDictionary.ContainsKey(entity);
+            EntitiesDictionary.TryGetValue(entity, out EntContainer entContainer);
+
+            return entContainer?.was_added ?? false;
+            //return EntitiesDictionary.ContainsKey(entity);
         }
 
         #region Equals/HashCode/Enumerator
@@ -383,7 +422,15 @@ namespace RangerV
                     Debug.LogError("remains_components меньше нуля " + remains_components);
                 if (remains_exceptions < 0)
                     Debug.LogError("remains_exceptions меньше нуля " + remains_exceptions);
+                if (entity <= 0)
+                    Debug.LogError("entity <= 0");
 
+
+
+                /*if (remains_components == 0 && remains_exceptions == 0 && entity >= 0)
+                    Debug.Log("сущность " + entity + " следует добавить в группу " + start_num_of_remains_components);
+                else
+                    Debug.Log("сущность " + entity + " следует добавить в группу " + start_num_of_remains_components);*/
 
                 return remains_components == 0 && remains_exceptions == 0 && entity >= 0;
             }
@@ -408,7 +455,7 @@ namespace RangerV
     public class ComponentsList
     {
         public List<Type> types;
-        public ComponentsList Empty { get => new ComponentsList(); }
+        public static ComponentsList Empty { get => new ComponentsList(); }
 
         public ComponentsList()
         {
