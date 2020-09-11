@@ -55,25 +55,25 @@ namespace RangerV
             return (T)resolve;
         }
 
-        public void StartProcessings()
+        public static void StartProcessings()
         {
-            ProcessingBase[] values = new ProcessingBase[Processings.Count];
-            Processings.Values.CopyTo(values, 0);
+            ProcessingBase[] prcessings = new ProcessingBase[Instance.Processings.Count];
+            Instance.Processings.Values.CopyTo(prcessings, 0);
 
-            for (int i = 0; i < Processings.Count; i++)
+            for (int i = 0; i < Instance.Processings.Count; i++)
             {
-                if (values[i] is ICustomStart)
-                    (values[i] as ICustomStart).OnStart();
+                if (prcessings[i] is ICustomStart)
+                    (prcessings[i] as ICustomStart).OnStart();
             }
         }
 
-        public static void StopProcessings()
+        public static void DisableProcessings()
         {
             Dictionary<Type, ProcessingBase> processings = Instance.Processings;
-            ProcessingBase[] values = new ProcessingBase[processings.Count];/// 
+            ProcessingBase[] values = new ProcessingBase[processings.Count];
             processings.Values.CopyTo(values, 0);
 
-            for (int i = 0; i < processings.Count; i++)
+            for (int i = 0; i < values.Length; i++)
                 if (values[i] is ICustomDisable)
                     (values[i] as ICustomDisable).OnCustomDisable();
 

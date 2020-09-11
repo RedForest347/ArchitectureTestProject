@@ -5,9 +5,6 @@ using System.Linq;
 
 namespace RangerV
 {
-    /// <summary>
-    /// Базовый класс Entity
-    /// </summary>
     public abstract class EntityBase : MonoBehaviour
     {
         public static event Action<int> OnCreateEntityID;

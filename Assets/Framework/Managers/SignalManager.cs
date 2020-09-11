@@ -2,10 +2,18 @@
 
 namespace RangerV
 {
-    /// сделать автоматическое добавление процессинга сюда (мб)
     public class SignalManager<T> where T : ISignal, new()
     {
-        public static SignalManager<T> Instance = new SignalManager<T>();
+        static SignalManager<T> instance;
+        public static SignalManager<T> Instance 
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new SignalManager<T>();
+                return instance;
+            }
+        }
 
         delegate void SignalHandler(T arg);
         event SignalHandler signalHandler;
@@ -20,13 +28,9 @@ namespace RangerV
             signalHandler -= receiver.SignalHandler;
         }
 
-        public void SendSignal(T arg)
+        public static void SendSignal(T arg)
         {
-            signalHandler?.Invoke(arg);
-            /*if (signalHandler != null)
-                signalHandler(arg);
-            else
-                Debug.LogWarning("SignalHandler of " + typeof(T).Name + " is null");*/
+            Instance.signalHandler?.Invoke(arg);
         }
 
     }

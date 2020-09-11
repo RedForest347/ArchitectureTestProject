@@ -41,7 +41,8 @@ namespace RangerV
         void Start();
     }
 
-    public interface IReceive<T> where T : ISignal, new() // убрать new
+
+    public interface IReceive<T> where T : ISignal
     {
         void SignalHandler(T arg);
     }

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Serialization;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace RangerV
 {
@@ -22,8 +19,21 @@ namespace RangerV
     [System.Serializable]
     public class ComponentBase: MonoBehaviour, IComponent
     {
-        int entity;
-        EntityBase entityBase;// добавить
-        //public string name;
+        public int entity { get => entityBase.entity; }
+
+        EntityBase _entityBase;
+        public EntityBase entityBase 
+        {
+            get 
+            {
+                if (_entityBase == null)
+                    _entityBase = GetComponent<EntityBase>();
+
+                return _entityBase;
+            } 
+        }
+
+
+
     }
 }

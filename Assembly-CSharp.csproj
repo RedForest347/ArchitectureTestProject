@@ -67,12 +67,6 @@
     <Compile Include="Assets\Framework\Custom Collections\ListFloat.cs" />
     <Compile Include="Assets\Framework\Custom Collections\ListInt.cs" />
     <Compile Include="Assets\Framework\Custom Collections\ListStruct.cs" />
-    <Compile Include="Assets\Framework\CustomEditor\CustomEditorBlocks.cs" />
-    <Compile Include="Assets\Framework\CustomEditor\CustomGUIeditorSettings.cs" />
-    <Compile Include="Assets\Framework\CustomEditor\EditorWindowCore.cs" />
-    <Compile Include="Assets\Framework\CustomEditor\EditorWindowSelected.cs" />
-    <Compile Include="Assets\Framework\CustomEditor\ENTEditor.cs" />
-    <Compile Include="Assets\Framework\CustomEditor\GUISkinEditor.cs" />
     <Compile Include="Assets\Framework\Main\Attributes.cs" />
     <Compile Include="Assets\Framework\Main\ComponentBase.cs" />
     <Compile Include="Assets\Framework\Main\Entity.cs" />
