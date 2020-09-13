@@ -1,6 +1,4 @@
-﻿#if DEBUG
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -290,7 +288,3 @@ namespace RangerV
     #endregion
 
 }
-
-
-
-#endif

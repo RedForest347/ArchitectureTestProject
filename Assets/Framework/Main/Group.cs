@@ -8,17 +8,14 @@ using System.Reflection;
 
 namespace RangerV
 {
-    ///идея: создать метод, который автоматом добавляет заданный метод в OnAddEntity и OnBeforeRemoveEntity и удаляет их, т.е.
-    ///сделать автоматический аналог логики, которая делается при добавлении методов процессинга в евент компонента
-
-
     /// <summary>
     /// создание группы:
-    /// Group group = Group.Create(new ComponentsList<SomeComp1, SomeComp2>() -- компоненты, new ComponentsList<SomeComp3, SomeComp4> -- исключения);
+    /// Group group = Group.Create(new ComponentsList<SomeComp1, SomeComp2>() -- компоненты --, new ComponentsList<SomeComp3, SomeComp4> -- исключения --);
     /// </summary>
-    /// <ploblem>
-    /// нет удаления группы, т.е. группа всегда останется в листе групп, не будет отписки от событий и т.д.
-    /// </ploblem>
+    /// <idea>
+    /// Идея по оптимизации GetEnumerator
+    /// GetEnumerator будет записываться в переменную и обновляться только при добавлении или удалении сущности, а не при заждом обращении к GetEnumerator
+    /// </idea>
     public class Group
     {
 
@@ -123,7 +120,7 @@ namespace RangerV
         long hash_code_exceptions;
 
         public event Action<int> OnAddEntity;
-        public event Action<int> OnBeforeRemoveEntity;
+        public event Action<int> OnRemoveEntity;
 
         private Group(List<Type> Components) : this(Components, new List<Type>(0)) { }
 
@@ -158,7 +155,7 @@ namespace RangerV
         {
             if (EntitiesDictionary[ent].was_added)
             {
-                OnBeforeRemoveEntity?.Invoke(ent);
+                OnRemoveEntity?.Invoke(ent);
                 RemoveEntity(ent);
             }
         }
@@ -395,7 +392,7 @@ namespace RangerV
                 OnAdd(button);
 
             OnAddEntity += OnAdd;
-            OnBeforeRemoveEntity += OnRemove;
+            OnRemoveEntity += OnRemove;
         }
 
         public void DeinitEvents(Action<int> OnAdd, Action<int> OnRemove)
@@ -404,7 +401,7 @@ namespace RangerV
                 OnRemove(button);
 
             OnAddEntity -= OnAdd;
-            OnBeforeRemoveEntity -= OnRemove;
+            OnRemoveEntity -= OnRemove;
         }
 
 

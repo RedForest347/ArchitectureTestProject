@@ -19,7 +19,7 @@ namespace RangerV
 
     public class Starter : MonoBehaviour        
     {
-        public static bool initialized;
+        public static bool initialized { get; private set; }
 
         private void Awake()
         {

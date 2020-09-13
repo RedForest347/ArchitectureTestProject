@@ -1,8 +1,5 @@
-﻿#if DEBUG
-
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
-
 using System.IO;
 
 namespace RangerV
@@ -128,6 +125,3 @@ namespace RangerV
 
     }
 }
-
-
-#endif

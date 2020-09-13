@@ -13,6 +13,8 @@ public class Test : MonoBehaviour
 {
     public int ents = 100;
     public int comps = 1;
+    public List<ISequence> sequences;
+    public Some<ComponentBase> some;
 
     private void Start()
     {
@@ -90,6 +92,17 @@ public class Test : MonoBehaviour
         Debug.Log("super on " + time.ElapsedMilliseconds);
     }
 
+}
+
+[System.Serializable]
+public class Some<T> where T : ComponentBase
+{
+    public List<T> list;
+}
+
+public interface ISequence
+{
+    void OnAdd();
 }
 
 
