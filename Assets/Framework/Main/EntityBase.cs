@@ -2,6 +2,7 @@
 using UnityEngine;
 using System;
 using System.Linq;
+using RangerV.Support;
 
 namespace RangerV
 {
@@ -16,10 +17,6 @@ namespace RangerV
         static EntityBase[] Entities { get => EntityBaseData.Instance.Entities; }
         static Stack<int> freeID { get => EntityBaseData.Instance.freeID; }
         static int nextMax { get => EntityBaseData.Instance.nextMax; set => EntityBaseData.Instance.nextMax = value; } 
-
-        /// <summary>
-        /// нулевой элемент не должен быть занят
-        /// </summary>
 
         public static int entity_count { get => EntityBaseData.Instance.nextMax; }
 
@@ -195,13 +192,12 @@ namespace RangerV
         public ComponentBase AddCmp(Type componentType)
         {
             if (componentType == typeof(ComponentBase))
-            {
-                Debug.LogError("Попытка добавить ComponentBase");
-                return null;
-            }
+                throw new Exception("Попытка добавить ComponentBase");
+
+            AddCmp(typeof(ComponentBase));
 
             if (!state.runtime)
-                return AddCmp_InEditorMode(componentType);
+                return AddCmpInEditorMode(componentType);
 
             if (Storage.ContainsComponent(componentType, entity))
             {
@@ -217,6 +213,8 @@ namespace RangerV
             ManagerUpdate.Instance.AddTo(component);
 
             Components.Add(component);
+            (this as Entity).show_comp.Add(false);
+
             Storage.AddComponent(component, entity);
             
             return component;
@@ -227,7 +225,7 @@ namespace RangerV
         /// </summary>
         /// <param name="componentType">тип компонента, который требуется добавить</param>
         /// <returns>компонент, если он был добавлен, null если не был</returns>
-        ComponentBase AddCmp_InEditorMode(Type componentType)
+        ComponentBase AddCmpInEditorMode(Type componentType)
         {
             if (Components.Any(comp => comp.GetType() == componentType))
             {
@@ -237,6 +235,8 @@ namespace RangerV
 
             ComponentBase _component = (ComponentBase)gameObject.AddComponent(componentType);
             Components.Add(_component);
+            (this as Entity).show_comp.Add(false);
+
             return _component;
         }
 
@@ -275,6 +275,7 @@ namespace RangerV
                 if (Components[i].GetType() == componentType)
                 {
                     Components.RemoveAt(i);
+                    (this as Entity).show_comp.RemoveAt(i);
                     return true;
                 }
             }
@@ -290,6 +291,7 @@ namespace RangerV
 
             DestroyImmediate(Components[index]);
             Components.RemoveAt(index);
+            (this as Entity).show_comp.RemoveAt(index);
             return true;
         }
 
@@ -343,7 +345,11 @@ namespace RangerV
 
 
     }
+}
 
+
+namespace RangerV.Support
+{
     /// <summary>
     /// костыль. его суть - хранить статическую дату для  EntityBase в нестатическом виде для нормального
     /// восстановления после ребилдинга. хорошо бы переделать в более правильный вид
@@ -352,8 +358,12 @@ namespace RangerV
     {
         public static EntityBaseData Instance { get => Singleton<EntityBaseData>.Instance; }
 
+        /// <summary>
+        /// нулевой элемент не должен быть занят
+        /// </summary>
         public EntityBase[] Entities;
         public Stack<int> freeID;
+
         public int nextMax;
 
         EntityBaseData()

@@ -108,7 +108,7 @@ namespace RangerV
             {
                 get
                 {
-                    if (_entityData.Length <= index || _entityData[index] == null/* || index < 0*/)
+                    if (_entityData.Length <= index || _entityData[index] == null)
                         return new entityData();
                     return _entityData[index];
                 }
@@ -153,7 +153,7 @@ namespace RangerV
         static Storage()
         {
             if (typeof(T) == typeof(ComponentBase))
-                Debug.LogError("создан Storage с типом ComponentBase");
+                throw new Exception("создан Storage с типом ComponentBase");
 
             Storage<T> storage = new Storage<T>();
             StorageDictionary.Add(typeof(T), storage);

@@ -63,6 +63,7 @@ namespace RangerV
 
                         if (show_comp_count != Components_count)
                         {
+                            Debug.LogError("show_comp_count != Components_count");
                             while (selected_object.show_comp.Count < Components_count)
                                 selected_object.show_comp.Add(false);
 
@@ -203,7 +204,7 @@ namespace RangerV
                 //comp.hideFlags = HideFlags.HideInInspector;
                 //selected_object.Components.Add(comp as ComponentBase);
                 selected_object.AddCmp((Type)componentType);
-                selected_object.show_comp.Add(false);
+                //selected_object.show_comp.Add(false);
                 ApplyPrefab();
             }
         }

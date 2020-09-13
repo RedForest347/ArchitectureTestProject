@@ -25,6 +25,13 @@ public class Test : MonoBehaviour
         {
             SceneManager.LoadScene(0);
         }
+        /*if (Input.GetKeyDown(KeyCode.K))
+        {
+            Entity entity = gameObject.AddComponent<Entity>();
+            entity.AddCmp<HealthComponent>();
+            entity.AddCmp<CollisionDamageComponent>();
+            
+        }*/
     }
 
     void DDD()

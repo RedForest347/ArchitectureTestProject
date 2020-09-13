@@ -66,7 +66,7 @@ namespace RangerV
             group.OnAddEntity += OnAdd;
 
             group.InitDictionary();
-            group.InitEvents();
+            group.InitGroupEvents();
 
             groups.Add(group);
 
@@ -123,7 +123,6 @@ namespace RangerV
         long hash_code_exceptions;
 
         public event Action<int> OnAddEntity;
-        //public event Action<int> OnAfterRemoveEntity;
         public event Action<int> OnBeforeRemoveEntity;
 
         private Group(List<Type> Components) : this(Components, new List<Type>(0)) { }
@@ -131,9 +130,9 @@ namespace RangerV
         private Group(List<Type> Components, List<Type> Exceptions)
         {
             if (Components == null)
-                Debug.LogError("при создании группы, лист Components пуст");
+                throw new Exception("при создании группы, лист Components пуст");
             if (Exceptions == null)
-                Debug.LogError("при создании группы, лист Exceptions пуст");
+                throw new Exception("при создании группы, лист Exceptions пуст");
 
             entities_count = 0;
             group_per_instance = 1;
@@ -145,7 +144,6 @@ namespace RangerV
             for (int i = 0; i < Exceptions.Count; i++)
                 hash_code_exceptions += Exceptions[i].GetHashCode();
 
-
         }
 
         void AddEntity(int entity)
@@ -155,10 +153,7 @@ namespace RangerV
             OnAddEntity?.Invoke(entity);
         }
 
-        /// <summary>
-        /// проверяет нужно ли удалить сущность ent из данной группы
-        /// </summary>
-        /// <param name="ent"></param>
+
         void CheckEntityOnRemove(int ent)
         {
             if (EntitiesDictionary[ent].was_added)
@@ -174,9 +169,7 @@ namespace RangerV
             entities_count--;
 
             if (EntityBase.GetEntity(entity) == null)
-                Debug.Log("EntityBase.GetEntity(entity) == null");
-
-            //OnAfterRemoveEntity?.Invoke(entity);
+                throw new Exception("EntityBase.GetEntity(entity) == null");
         }
 
         public List<Type> GetComponentTypes()
@@ -227,7 +220,7 @@ namespace RangerV
             }
         }
 
-        void InitEvents()
+        void InitGroupEvents()
         {
             EntityBase.OnBeforeAddComponents += OnCreateNewEntityID;
 
@@ -334,13 +327,12 @@ namespace RangerV
         public void Delete() // функция, которая обнуляет группу
         {
             if (group_per_instance != 1)
-                Debug.LogWarning("На данную группу ссылаются и из других мест. Ее удаление в данном случае не рекомендуется");
+                Debug.LogWarning("На данную группу ссылаются и из других мест. Ее удаление в данном случае не рекомендуется (удаление произойдет)");
             DeleteBase();
         }
 
         void DeleteBase()
         {
-            // придумать что делать если на одну группу ссылаются несколько ссылок
             FinalEvents();
             Components = Exceptions = null;
             hash_code_components = hash_code_exceptions = 0;
@@ -367,7 +359,6 @@ namespace RangerV
             EntitiesDictionary.TryGetValue(entity, out EntContainer entContainer);
 
             return entContainer?.was_added ?? false;
-            //return EntitiesDictionary.ContainsKey(entity);
         }
 
         #region Equals/HashCode/Enumerator
