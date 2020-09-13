@@ -26,9 +26,9 @@ namespace RangerV
 
         static List<Group> groups = new List<Group>();
 
-        public static Group Create(ComponentsList Components, Action<int> OnAdd = null)
+        public static Group Create(ComponentsList Components)
         {
-            return Create(Components, null, OnAdd);
+            return Create(Components, ComponentsList.Empty);
         }
 
 
@@ -39,19 +39,21 @@ namespace RangerV
         /// <param name="Components">компоненты, которые обязаны быть в группе</param>
         /// <param name="Exceptions">компоненты, которых обязано не быть в группе</param>
         /// <returns>возвращает ссылку на созданную/существующую группу</returns>
-        public static Group Create(ComponentsList Components, ComponentsList Exceptions, Action<int> OnAdd = null)
+        public static Group Create(ComponentsList Components, ComponentsList Exceptions)
         {
             if (Components == null)
-                Debug.LogError("Components == null");
-
-            if (Components.types.GroupBy(g => g).Where(w => w.Count() > 1).Count() != 0)
-                Debug.LogError("повторяющиеся компоненты при создании группы. Группа будет создана");
-
-            if (Exceptions != null && Exceptions.types.GroupBy(g => g).Where(w => w.Count() > 1).Count() != 0)
-                Debug.LogError("повторяющиеся исключения при создании группы. Группа будет создана");
+                Debug.LogException(new Exception("при создании группы лист компонентов пуст"));
 
             if (Exceptions == null)
-                Exceptions = new ComponentsList();
+                Debug.LogException(new Exception("при создании группы лист исключений пуст (используй Group.Create(ComponentsList Components))"));
+
+            if (Components.types.GroupBy(g => g).Where(w => w.Count() > 1).Count() != 0)
+                Debug.LogException(new Exception("повторяющиеся компоненты при создании группы"));
+
+            if (Exceptions != null && Exceptions.types.GroupBy(g => g).Where(w => w.Count() > 1).Count() != 0)
+                Debug.LogException(new Exception("повторяющиеся исключения при создании группы"));
+
+
 
             Group group = new Group(Components.types, Exceptions.types);
 
@@ -62,8 +64,6 @@ namespace RangerV
                 exist_group.group_per_instance++;
                 return exist_group;
             }
-
-            group.OnAddEntity += OnAdd;
 
             group.InitDictionary();
             group.InitGroupEvents();
@@ -238,7 +238,6 @@ namespace RangerV
             }
         }
 
-
         void FinalEvents()
         {
             EntityBase.OnBeforeAddComponents -= OnCreateNewEntityID;
@@ -304,18 +303,21 @@ namespace RangerV
             if (EntitiesDictionary[entity].ShouldJoin())
                 AddEntity(entity);
         }
+
         void OnRemoveComponent(int ent)
         {
             EntitiesDictionary[ent].remains_components++;
 
             CheckEntityOnRemove(ent);
         }
+
         void OnAddException(int ent)
         {
             EntitiesDictionary[ent].remains_exceptions++;
 
             CheckEntityOnRemove(ent);
         }
+
         void OnRemoveException(int ent)
         {
             EntitiesDictionary[ent].remains_exceptions--;
@@ -384,6 +386,29 @@ namespace RangerV
         }
 
         #endregion Equals/HashCode/Enumerator
+
+        #region Test
+
+        public void InitEvents(Action<int> OnAdd, Action<int> OnRemove)
+        {
+            foreach (int button in this)
+                OnAdd(button);
+
+            OnAddEntity += OnAdd;
+            OnBeforeRemoveEntity += OnRemove;
+        }
+
+        public void DeinitEvents(Action<int> OnAdd, Action<int> OnRemove)
+        {
+            foreach (int button in this)
+                OnRemove(button);
+
+            OnAddEntity -= OnAdd;
+            OnBeforeRemoveEntity -= OnRemove;
+        }
+
+
+        #endregion
 
 
         class EntContainer

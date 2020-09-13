@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static RangerV.ThreadManager;
@@ -23,7 +24,7 @@ public class Test : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.L))
         {
-            SceneManager.LoadScene(0);
+            //SceneManager.LoadScene(0);
         }
         /*if (Input.GetKeyDown(KeyCode.K))
         {
