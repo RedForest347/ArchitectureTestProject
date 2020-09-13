@@ -5,8 +5,12 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 using static RangerV.ThreadManager;
 using Stopwatch = System.Diagnostics.Stopwatch;
+using UnityEditor.Experimental.TerrainAPI;
+using System.Linq;
+using UnityEditor.Playables;
 //using UnityEngine.SceneManagement;
 
 public class Test : MonoBehaviour
@@ -14,7 +18,8 @@ public class Test : MonoBehaviour
     public int ents = 100;
     public int comps = 1;
     public List<ISequence> sequences;
-    public Some<ComponentBase> some;
+
+    public List<ComponentBase> componentBases;
 
     private void Start()
     {
@@ -95,14 +100,76 @@ public class Test : MonoBehaviour
 }
 
 [System.Serializable]
-public class Some<T> where T : ComponentBase
+public class Some
 {
-    public List<T> list;
+    public List<ComponentBase> list;
 }
+
+
+[CustomEditor(typeof(Test))]
+//[CanEditMultipleObjects]
+public class SomeInspector : Editor
+{
+    Test test;
+
+    private void OnEnable()
+    {
+        test = (Test)target;
+
+        //test.componentBases = test.GetComponents<ComponentBase>().ToList();
+        Debug.Log("OnEnable");
+        //test.componentBases.Add();
+    }
+
+    public override void OnInspectorGUI()
+    {
+        //base.OnInspectorGUI();
+        NewOnInspectorGUI();
+    }
+
+    void NewOnInspectorGUI()
+    {
+        //GUILayout.Label("DDD XD");
+        for (int i = 0; i < test.componentBases.Count; i++)
+        {
+            EditorGUI.BeginChangeCheck();
+
+            ComponentBase componentBase = (ComponentBase)EditorGUILayout.ObjectField(test.componentBases[i], typeof(ComponentBase), true);
+
+            if (componentBase == null)
+            {
+                SetDirty();
+                test.componentBases[i] = null;
+            }
+            else if (componentBase is ISequence)
+            {
+                SetDirty();
+                test.componentBases[i] = componentBase;
+            }
+            else
+            {
+                Debug.LogWarning("not ISequence");
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                //EditorUtility.SetDirty(test);
+                //Undo.RecordObject(test, "Changed Area Of Effect");
+            }
+        }
+
+        void SetDirty()
+        {
+            EditorUtility.SetDirty(test);
+            Undo.RecordObject(test, "Changed Area Of Effect");
+        }
+    }
+}
+
 
 public interface ISequence
 {
-    void OnAdd();
+    //void OnAdd();
 }
 
 
