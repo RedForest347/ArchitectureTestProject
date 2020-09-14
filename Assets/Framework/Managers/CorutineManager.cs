@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using static RangerV.ThreadManager;
 
 namespace RangerV
@@ -8,11 +9,27 @@ namespace RangerV
     {
         static List<IEnumerator> corutines_update;
         static List<IEnumerator> corutines_fixed_update;
+        static bool init;
+
+        static CorutineManager()
+        {
+            if (corutines_update == null)
+            {
+                Debug.Log("не инициализировано");
+
+                corutines_update = new List<IEnumerator>();
+                corutines_fixed_update = new List<IEnumerator>();
+                init = true;
+            }
+        }
 
         public void OnAwake()
         {
-            corutines_update = new List<IEnumerator>();
-            corutines_fixed_update = new List<IEnumerator>();
+            if (!init)
+            {
+                corutines_update = new List<IEnumerator>();
+                corutines_fixed_update = new List<IEnumerator>();
+            }
         }
 
         public void CustomUpdate()

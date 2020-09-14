@@ -192,9 +192,7 @@ namespace RangerV
         public ComponentBase AddCmp(Type componentType)
         {
             if (componentType == typeof(ComponentBase))
-                throw new Exception("Попытка добавить ComponentBase");
-
-            AddCmp(typeof(ComponentBase));
+                throw new Exception("Попытка добавить ComponentBase " + componentType);
 
             if (!state.runtime)
                 return AddCmpInEditorMode(componentType);

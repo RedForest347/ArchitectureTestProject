@@ -63,12 +63,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Framework\Editor\CustomEditorBlocks.cs" />
-    <Compile Include="Assets\Framework\Editor\CustomGUIeditorSettings.cs" />
-    <Compile Include="Assets\Framework\Editor\EditorWindowCore.cs" />
-    <Compile Include="Assets\Framework\Editor\EditorWindowSelected.cs" />
-    <Compile Include="Assets\Framework\Editor\ENTEditor.cs" />
-    <Compile Include="Assets\Framework\Editor\GUISkinEditor.cs" />
+    <Compile Include="Assets\Framework\Editor\EntityEditor\CustomEditorBlocks.cs" />
+    <Compile Include="Assets\Framework\Editor\EntityEditor\CustomGUIeditorSettings.cs" />
+    <Compile Include="Assets\Framework\Editor\EntityEditor\EditorWindowCore.cs" />
+    <Compile Include="Assets\Framework\Editor\EntityEditor\EditorWindowSelected.cs" />
+    <Compile Include="Assets\Framework\Editor\EntityEditor\ENTEditor.cs" />
+    <Compile Include="Assets\Framework\Editor\EntityEditor\GUISkinEditor.cs" />
+    <Compile Include="Assets\Framework\Editor\SequenceInspector.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>D:/Unity/архитектура/branch/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>

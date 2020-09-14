@@ -88,9 +88,7 @@
     <Compile Include="Assets\Framework\SomeExamples\ComponentExample.cs" />
     <Compile Include="Assets\Framework\SomeExamples\ProcessingExample.cs" />
     <Compile Include="Assets\Framework\SupportClases\ExtensibleArray.cs" />
-    <Compile Include="Assets\Framework\To tests\GOHolder.cs" />
-    <Compile Include="Assets\Framework\To tests\KernelManager.cs" />
-    <Compile Include="Assets\Framework\To tests\SequenceCmp.cs" />
+    <Compile Include="Assets\Framework\To tests\SequenceEventCmp.cs" />
     <Compile Include="Assets\Framework\To tests\Test.cs" />
     <Compile Include="Assets\Scripts\Components\ArmorComponent.cs" />
     <Compile Include="Assets\Scripts\Components\CollisionComponent.cs" />
