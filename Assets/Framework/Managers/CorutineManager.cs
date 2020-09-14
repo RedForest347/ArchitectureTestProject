@@ -5,30 +5,25 @@ using static RangerV.ThreadManager;
 
 namespace RangerV
 {
-    public class CorutineManager : ProcessingBase, ICustomFixedUpdate, ICustomUpdate, ICustomAwake
+    public class CorutineManager : ProcessingBase, ICustomFixedUpdate, ICustomUpdate
     {
         static List<IEnumerator> corutines_update;
         static List<IEnumerator> corutines_fixed_update;
-        static bool init;
+
+        static bool was_init;
 
         static CorutineManager()
         {
-            if (corutines_update == null)
-            {
-                Debug.Log("не инициализировано");
-
-                corutines_update = new List<IEnumerator>();
-                corutines_fixed_update = new List<IEnumerator>();
-                init = true;
-            }
+            Init();
         }
 
-        public void OnAwake()
+        static void Init()
         {
-            if (!init)
+            if (!was_init)
             {
                 corutines_update = new List<IEnumerator>();
                 corutines_fixed_update = new List<IEnumerator>();
+                was_init = true;
             }
         }
 

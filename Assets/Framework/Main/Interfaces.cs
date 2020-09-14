@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,6 +40,12 @@ namespace RangerV
         void Stop();
 
         void Start();
+    }
+
+    public interface ISequence
+    {
+        void StartSequenceElem();
+        event Action StartNextSiquenceElem;
     }
 
 

@@ -22,6 +22,7 @@ public class SequenceInspector : Editor
 
     void NewOnInspectorGUI()
     {
+
         if (sequence.sequenceElemData == null)
             sequence.sequenceElemData = new List<SequenceElemData>();
 
@@ -32,7 +33,19 @@ public class SequenceInspector : Editor
 
             EditorGUILayout.BeginVertical("box");
 
+            EditorGUILayout.BeginHorizontal();
+
             ComponentBase componentBase = (ComponentBase)EditorGUILayout.ObjectField(sequence.sequenceElemData[i].componentBase, typeof(ComponentBase), true);
+
+            if (GUILayout.Button("Remove", GUILayout.Width(140), GUILayout.Height(15)))
+            {
+                sequence.sequenceElemData.RemoveAt(i--);
+                continue;
+            }
+
+            EditorGUILayout.EndHorizontal();
+
+
 
             sequence.sequenceElemData[i].show_elem = EditorGUILayout.Foldout(sequence.sequenceElemData[i].show_elem, "Описание", true);
 
@@ -42,19 +55,15 @@ public class SequenceInspector : Editor
                 skin.textArea.wordWrap = true;
 
                 EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true));
+                
+
                 sequence.sequenceElemData[i].scroll = EditorGUILayout.BeginScrollView(sequence.sequenceElemData[i].scroll);
                 sequence.sequenceElemData[i].note = EditorGUILayout.TextArea(sequence.sequenceElemData[i].note, new GUIStyle(skin.textArea));
                 EditorGUILayout.EndScrollView();
+
+                
                 EditorGUILayout.EndVertical();
             }
-
-            if (GUILayout.Button("Remove", GUILayout.Width(140), GUILayout.Height(20)))
-            {
-                sequence.sequenceElemData.RemoveAt(i);
-                i--;
-                continue;
-            }
-
 
             EditorGUILayout.EndVertical();
 
@@ -80,6 +89,11 @@ public class SequenceInspector : Editor
         {
             sequence.sequenceElemData.Add(new SequenceElemData());
             SetDirty();
+        }
+
+        if (!sequence.CheckSequenceElemsForCorrectValues())
+        {
+            EditorGUILayout.HelpBox("Не все элементы в списке корректны (не существуют или не являются ISequence)", MessageType.Error);
         }
 
         void SetDirty()
