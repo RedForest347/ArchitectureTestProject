@@ -912,6 +912,21 @@ PrefabInstance:
       propertyPath: sequenceElemData.Array.data[0].componentBase
       value: 
       objectReference: {fileID: 988536411}
+    - target: {fileID: 9140221984636131256, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: sequenceElemData.Array.data[0].show_private_methods
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9140221984636131256, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: sequenceElemData.Array.data[1].show_private_methods
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9140221984636131256, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: sequenceElemData.Array.data[0].kostyl
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1543349201113552952, guid: ca3187c6d1436544b8cf72a0df81cb96, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ca3187c6d1436544b8cf72a0df81cb96, type: 3}

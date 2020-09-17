@@ -4,6 +4,7 @@ using UnityEngine;
 using RangerV;
 using System;
 using System.Linq;
+using System.Reflection;
 
 /// <summary>
 /// инструкция по использованию:
@@ -28,7 +29,7 @@ public class SequenceEventCmp : ComponentBase, ICustomAwake
 
     public void OnAwake()
     {
-        StartSequence();
+        //StartSequence();
     }
 
     public void StartSequence()
@@ -87,11 +88,16 @@ public class SequenceElemData
     public ComponentBase componentBase;
 
     public string note;
-
+    public MethodInfo methodInfo;
 
     //Inspector data
     public bool show_elem;
+    public bool show_private_methods;
+    
+
+
     public Vector2 scroll;
+    
 
     public SequenceElemData()
     {
@@ -104,6 +110,7 @@ public class SequenceElemData
 public class SomeSeqenceCmp : ComponentBase, ISequence
 {
     public event Action StartNextSiquenceElem;
+    //public event Action<int> DDD
 
     public void StartSequenceElem()
     {
@@ -126,5 +133,3 @@ public class SomeSeqenceCmp : ComponentBase, ISequence
 
     }
 }
-
-

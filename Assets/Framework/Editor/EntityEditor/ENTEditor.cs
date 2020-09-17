@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using UnityEditor;
+
 using UnityEngine;
 
 using System.Reflection;
 using System;
 using System.Linq;
+using UnityEditor;
 
 namespace RangerV
 {
@@ -172,18 +173,19 @@ namespace RangerV
                     if (with_component_attribute ? (add_component_list[i].GetCustomAttribute<ComponentAttribute>() != null)
                                                  : (add_component_list[i].GetCustomAttribute<ComponentAttribute>() == null))
                     {
-                        string menuPath = "";
+                        string menuPath;
 
                         if (with_component_attribute) 
                             menuPath = add_component_list[i].GetCustomAttribute<ComponentAttribute>().GetPath();
                         else 
                             menuPath = add_component_list[i].Name;
 
-                        bool set = false;
+                        bool set = selected_object.Components.Where(componentBase => componentBase.GetType() == add_component_list[i]).ToList().Count != 0;
 
-                        if (selected_object.Components.Where(componentBase => componentBase.GetType() == add_component_list[i]).ToList().Count != 0) 
+                        /*if (selected_object.Components.Where(componentBase => componentBase.GetType() == add_component_list[i]).ToList().Count != 0) 
                             set = true;
-
+                        */
+                        
                         if (set) 
                             dropdownMenu.AddItem(new GUIContent(menuPath), set, RemoveItem, add_component_list[i]);
                         else 
