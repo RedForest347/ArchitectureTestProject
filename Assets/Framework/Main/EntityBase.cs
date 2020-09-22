@@ -246,7 +246,7 @@ namespace RangerV
             if (!Storage.ContainsComponent<T>(entity))
                 return false;
 
-            Destroy(GetEntityComponent<T>());
+            Destroy(GetCmp<T>());
             Storage.RemoveComponent<T>(entity);
             RemoveCmpFromLists(typeof(T));
             return true;
@@ -260,7 +260,7 @@ namespace RangerV
             if (!Storage.ContainsComponent(componentType, entity))
                 return false;
 
-            Destroy(GetEntityComponent(componentType));
+            Destroy(GetCmp(componentType));
             Storage.RemoveComponent(componentType, entity);
             RemoveCmpFromLists(componentType);
             return true;
@@ -315,23 +315,29 @@ namespace RangerV
             return componentBases;
         }
 
-        public T GetEntityComponent<T>() where T : ComponentBase, IComponent, new()
+        public T GetCmp<T>() where T : ComponentBase, IComponent, new()
         {
             return Storage.GetComponent<T>(entity);
         }
 
-        public ComponentBase GetEntityComponent(Type type)
+        public ComponentBase GetCmp(Type type)
         {
+            if (type == null)
+                Debug.LogException(new ArgumentNullException("parametr name: type"));
+
             return Storage.GetComponent(type, entity);
         }
 
-        public bool ContainsEntityComponent<T>() where T : ComponentBase, IComponent, new()
+        public bool ContainsCmp<T>() where T : ComponentBase, IComponent, new()
         {
             return Storage.ContainsComponent<T>(entity) ? true : false;
         }
 
-        public bool ContainsEntityComponent(Type type)
+        public bool ContainsCmp(Type type)
         {
+            if (type == null)
+                Debug.LogException(new ArgumentNullException("parametr name: type"));
+
             return Storage.ContainsComponent(type, entity) ? true : false;
         }
 

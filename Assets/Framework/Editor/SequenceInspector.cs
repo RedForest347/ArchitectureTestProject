@@ -1,4 +1,5 @@
 ﻿using RangerV;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +15,7 @@ public class SequenceInspector : Editor
 
     private void OnEnable()
     {
-        sequence = (SequenceEventCmp)target;
+        sequence = target as SequenceEventCmp;
     }
 
     public override void OnInspectorGUI()
@@ -34,10 +35,6 @@ public class SequenceInspector : Editor
         for (int i = 0; i < sequence.sequenceElemData.Count; i++)
         {
             EditorGUI.BeginChangeCheck();
-
-
-
-
 
 
             EditorGUILayout.BeginVertical("box");
@@ -133,38 +130,42 @@ public class SequenceInspector : Editor
 
             List<ComponentBase> CmpList = sequence.entityBase.GetAllComponents();
 
-            List<MethodInfo> methodInfo = new List<MethodInfo>();
+            List<DropDownMethodData> methodData = new List<DropDownMethodData>();
 
             for (int i = 0; i < CmpList.Count; i++)
             {
-                if (CmpList[i] != null)
-                {
-                    if (sequenceData.show_private_methods)
-                    {
-                        methodInfo.AddRange(CmpList[i].GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).ToList());
-                    }
-                    else
-                    {
-                        methodInfo.AddRange(CmpList[i].GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public).ToList());
-                    }
-                }
+                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+
+                if (sequenceData.show_private_methods)
+                    bindingFlags |= BindingFlags.NonPublic;
+
+
+                List<MethodInfo> Methods = CmpList[i].GetType().GetMethods(bindingFlags).Where((p) => p.GetParameters().Length == 0).ToList();
+
+                for (int k = 0; k < Methods.Count; k++)
+                    methodData.Add(new DropDownMethodData(Methods[k], CmpList[i]));
+
             }
 
-            methodInfo.Sort((i, j) => string.Compare(i.DeclaringType + "/" + i.Name, j.DeclaringType + "/" + j.Name));
+            methodData.Sort((i, j) => string.Compare(i.methodInfo.DeclaringType + "/" + i.methodInfo.Name, j.methodInfo.DeclaringType + "/" + j.methodInfo.Name));
 
-            Debug.Log("всего " + methodInfo.Count + " методов");
+            //Debug.Log("всего " + methodInfo.Count + " методов");
 
-            for (int i = 0; i < methodInfo.Count; i++)
+            for (int i = 0; i < methodData.Count; i++)
             {
                 string path = "";
 
-                if (methodInfo[i].DeclaringType?.BaseType == typeof(ComponentBase))
+                if (methodData[i].methodInfo.DeclaringType?.BaseType == typeof(ComponentBase))
                     path += "RangerV.Components/";
 
-                path += methodInfo[i].DeclaringType + "/";
+                path += methodData[i].methodInfo.DeclaringType + "/";
 
 
-                dropdownMenu.AddItem(new GUIContent(path + methodInfo[i].Name), false, DDD, i);
+                //type = methodInfo[i].DeclaringType
+                //method name = methodInfo[i].Name
+
+
+                dropdownMenu.AddItem(new GUIContent(path + methodData[i].methodInfo.Name), false, SetMethodData, methodData[i]);
             }
 
 
@@ -174,9 +175,48 @@ public class SequenceInspector : Editor
         }
     }
 
-
-    void DDD(object int_value)
+    void SetMethodData(object _methodData)
     {
-        Debug.Log("DDD " + (int)int_value);
+        DropDownMethodData methodData = (DropDownMethodData)_methodData;
+
+        //Debug.Log("(string)arr[0] = " + (string)arr[0]);
+        //Debug.Log("new Type = " + Type.GetType(typeof(SomeSeqenceCmp).FullName));
+
+        //Type selectedCmpType = Type.GetType((string)arr[0]);
+
+
+        // methodInfo[i].DeclaringType.FullName, methodInfo[i].Name, methodInfo[i].DeclaringType.Assembly.FullName, methodInfo[i] 
+
+
+        //methodData.componentBase
+
+        string type_name = methodData.methodInfo.DeclaringType.FullName;
+        string selected_func = methodData.methodInfo.Name;
+        string assembly_name = methodData.methodInfo.DeclaringType.Assembly.FullName;
+
+        Type selectedCmpType = Assembly.Load(assembly_name).GetType(type_name);
+
+        Debug.Log("select type = " + selectedCmpType + " select func = " + selected_func + " assembly_name = " + assembly_name);
+
+        ComponentBase componentBase = sequence.entityBase.GetCmp(selectedCmpType);
+
+        
+
+        selectedCmpType.GetMethod(selected_func).Invoke(componentBase, null);
+
+
+    }
+
+
+    class DropDownMethodData
+    {
+        public MethodInfo methodInfo;
+        public ComponentBase componentBase;
+
+        public DropDownMethodData(MethodInfo methodInfo, ComponentBase componentBase)
+        {
+            this.methodInfo = methodInfo;
+            this.componentBase = componentBase;
+        }
     }
 }

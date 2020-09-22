@@ -37,48 +37,34 @@ public class Test : MonoBehaviour
     public EventBase bas;
     public EventDescriptor descriptor;
     public EventTrigger trigger;
+    public SomeT someT;
+    public SomeT DDDSome;
     //public EventBase descriptor;
     //public EventDescriptor descriptor;
 
 
     //public List<ComponentBase> componentBases;
 
+    public Type type;
+
     private void Start()
     {
-        MethodInfo[] methodInfo = GetType().GetMethods();
-        MethodInfo DInf = GetType().GetMethod("DDD");
-
-        Stopwatch time = Stopwatch.StartNew();
-
-        for (int i = 0; i < 10000; i++)
-        {
-            DInf.Invoke(this, null);
-        }
-        Debug.Log("on " + time.ElapsedMilliseconds + " ms");
-
-        time.Restart();
-        for (int i = 0; i < 1000000; i++)
-        {
-            DDD();
-        }
-        Debug.Log("on " + time.ElapsedMilliseconds + " ms");
-
-        //Debug.Log("всего " + methodInfo.Length + " методов");
-
-        /*for (int i = 0; i < methodInfo.Length; i++)
-        {
-            if (methodInfo[i].Name == "DDD")
-                methodInfo[i].Invoke(this, null);
-        }*/
+        
     }
 
     public void DDD()
     {
-        //Debug.Log("DDD complete");
+        Debug.Log("type = " + type);
+
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            type = typeof(Starter);
+        }
     }
 
     void Update()
     {
+        DDD();
 
         if (Input.GetKeyDown(KeyCode.L))
         {

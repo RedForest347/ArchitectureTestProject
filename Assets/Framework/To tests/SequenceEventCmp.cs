@@ -16,7 +16,7 @@ using System.Reflection;
 /// затем, по окончанию всех необходимых действий, после вызова StartNextSiquenceElem начинается выполнение кода следующего элемента
 /// по окончании выполнения кода всех элементов, вызывается евент OnCompleteSequence
 /// </summary>
-public class SequenceEventCmp : ComponentBase, ICustomAwake
+public class SequenceEventCmp : ComponentBase
 {
     public bool start_is_awake;
     public List<SequenceElemData> sequenceElemData;
@@ -78,26 +78,28 @@ public class SequenceEventCmp : ComponentBase, ICustomAwake
 
         return true;
     }
-
 }
 
 [System.Serializable]
 public class SequenceElemData
 {
-    public ISequence sequence { get => componentBase as ISequence; }
     public ComponentBase componentBase;
+    public ISequence sequence { get => componentBase as ISequence; }
 
-    public string note;
-    public MethodInfo methodInfo;
 
     //Inspector data
+    public string note;
     public bool show_elem;
     public bool show_private_methods;
-    
-
-
     public Vector2 scroll;
-    
+
+    //Method Data
+    public string type_name;
+    public string method_name;
+    public string assembly_name;
+    public ComponentBase lincOnComponent;
+
+
 
     public SequenceElemData()
     {
@@ -107,29 +109,19 @@ public class SequenceElemData
     }
 }
 
-public class SomeSeqenceCmp : ComponentBase, ISequence
+[System.Serializable]
+public class SequenceMethodData
 {
-    public event Action StartNextSiquenceElem;
-    //public event Action<int> DDD
+    public string funk_name;
+    public Type class_type;
+    public ComponentBase componentBase;
 
-    public void StartSequenceElem()
+    public SequenceMethodData(string funk_name, Type class_type, ComponentBase componentBase)
     {
-        CorutineManager.StartCorutine(DDD());
-    }
-
-    IEnumerator DDD()
-    {
-        Debug.Log("Начата задача");
-        for (int i = 0; i < 200; i++)
-        {
-            if (i % 50 == 0)
-                Debug.Log(i);
-            yield return null;
-        }
-        Debug.Log("Закончена задача");
-        yield return null;
-
-        StartNextSiquenceElem?.Invoke();
-
+        this.funk_name = funk_name;
+        this.class_type = class_type;
+        this.componentBase = componentBase;
     }
 }
+
+

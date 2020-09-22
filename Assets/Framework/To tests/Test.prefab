@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5070448687779044048}
-  - component: {fileID: 6944456944422932505}
   - component: {fileID: 5070448687779044049}
-  - component: {fileID: 9140221984636131256}
-  - component: {fileID: 1543349201113552952}
+  - component: {fileID: 2106526672697411229}
+  - component: {fileID: 303253140106603963}
+  - component: {fileID: 5920822061885826737}
   m_Layer: 0
   m_Name: Test
   m_TagString: Untagged
@@ -34,27 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6944456944422932505
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5070448687779044050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26e1f9b88a859c94db05d57547e7de86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entity: 0
-  Components:
-  - {fileID: 9140221984636131256}
-  state:
-    enabled: 0
-    requireStarter: 0
-    initialized: 0
-    runtime: 0
-  show_comp: 01
 --- !u!114 &5070448687779044049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,7 +48,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ents: 100
   comps: 1
---- !u!114 &9140221984636131256
+  trigger: {fileID: 0}
+--- !u!114 &2106526672697411229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5070448687779044050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26e1f9b88a859c94db05d57547e7de86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entity: 0
+  Components: []
+  state:
+    enabled: 0
+    requireStarter: 0
+    initialized: 0
+    runtime: 0
+  show_comp: 
+--- !u!114 &303253140106603963
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,23 +83,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   start_is_awake: 0
   sequenceElemData:
-  - componentBase: {fileID: 9140221984636131256}
-    note: 111
-    show_elem: 0
-    scroll: {x: 0, y: 0}
-  - componentBase: {fileID: 0}
-    note: 111
-    show_elem: 0
-    scroll: {x: 0, y: 0}
   - componentBase: {fileID: 0}
     note: 
     show_elem: 0
+    show_private_methods: 0
+    type_name: 
+    method_name: 
+    lincOnComponent: {fileID: 0}
     scroll: {x: 0, y: 0}
-  - componentBase: {fileID: 9140221984636131256}
-    note: dfgdfgdfg
-    show_elem: 0
-    scroll: {x: 0, y: 0}
---- !u!114 &1543349201113552952
+--- !u!114 &5920822061885826737
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,6 +100,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 5070448687779044050}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 29e65221792cf234da172e0e1cb24f3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
