@@ -835,6 +835,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Test
       objectReference: {fileID: 0}
+    - target: {fileID: 5335214794196528985, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: funcHolder.type_name
+      value: RangerV.Entity
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335214794196528985, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: funcHolder.method_name
+      value: Setup
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335214794196528985, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: funcHolder.assembly_name
+      value: Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335214794196528985, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: funcHolder.component
+      value: 
+      objectReference: {fileID: 5070448688324563366}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca3187c6d1436544b8cf72a0df81cb96, type: 3}
 --- !u!114 &5070448688324563364 stripped
@@ -859,6 +879,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9bf81ade88175c344a05fedbc970f5da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5070448688324563366 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2106526672697411229, guid: ca3187c6d1436544b8cf72a0df81cb96,
+    type: 3}
+  m_PrefabInstance: {fileID: 5070448688324563363}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26e1f9b88a859c94db05d57547e7de86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &5070448688324563368 stripped

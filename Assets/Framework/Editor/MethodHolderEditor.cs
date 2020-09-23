@@ -38,32 +38,63 @@ public class MethodHolderEditor : PropertyDrawer
 
         
 
-        if (EditorGUI.DropdownButton(position, content, FocusType.Passive, style))
+        if (EditorGUI.DropdownButton(new Rect(position.x, position.y, 70, 15), content, FocusType.Passive, style))
         {
             CreateDropDownMenu(someT, componentBase.GetComponent<SomeSeqenceCmp>());
         }
 
-        position.x += new GUIStyle().CalcSize(content).x + 60;
+        /*position.x += new GUIStyle().CalcSize(content).x + 60;
         if (EditorGUI.DropdownButton(position, new GUIContent("DoFunc"), FocusType.Passive, style))
         {
             someT.StartMethod();
-        }
+        }*/
+        //position.y += 40;
+        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+
+        // Don't make child fields be indented
+        var indent = EditorGUI.indentLevel;
+        EditorGUI.indentLevel = 0;
+
+        // Calculate rects
+        var amountRect = new Rect(position.x, position.y, 30, position.height);
+        var unitRect = new Rect(position.x + 35, position.y, 50, position.height);
+        var nameRect = new Rect(position.x + 90, position.y, position.width - 90, position.height);
+
+        // Draw fields - passs GUIContent.none to each so they are drawn without labels
+        EditorGUI.PropertyField(amountRect, property.FindPropertyRelative("type_name"), GUIContent.none);
+        EditorGUI.PropertyField(unitRect, property.FindPropertyRelative("method_name"), GUIContent.none);
+        EditorGUI.PropertyField(nameRect, property.FindPropertyRelative("assembly_name"), GUIContent.none);
+
+        // Set indent back to what it was
+        EditorGUI.indentLevel = indent;
+
+
+
+
 
         EditorGUI.EndProperty();
+
+
+
+
+
+
 
         void CreateDropDownMenu(MethodHolder someT, ComponentBase componentBase)
         {
             GenericMenu dropdownMenu = new GenericMenu();
 
-            List<ComponentBase> CmpList = componentBase.entityBase.GetAllComponents();
+            //List<ComponentBase> CmpList = componentBase.entityBase.GetAllComponents();
+            Component[] CmpList = componentBase.GetComponents<Component>();
+
             List<MethodInfo> methodInfos = new List<MethodInfo>(100);
 
-            for (int i = 0; i < CmpList.Count; i++)
+            for (int i = 0; i < CmpList.Length; i++)
             {
-                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly;
 
                 List<MethodInfo> Methods = CmpList[i].GetType().GetMethods(bindingFlags)
-                    .Where((p) => p.GetParameters().Length == 0 && p.DeclaringType.BaseType == typeof(ComponentBase))
+                    .Where((p) => p.GetParameters().Length == 0)
                     .ToList();
 
                 for (int k = 0; k < Methods.Count; k++)
@@ -95,14 +126,39 @@ public class MethodHolderEditor : PropertyDrawer
     {
         MethodInfo methodInfo = (MethodInfo)_methodInfo;
 
+        //EditorGUI.BeginChangeCheck();
+
         someT.method_name = methodInfo.Name;
-        someT.type_name = methodInfo.DeclaringType.Name;
+        someT.type_name = methodInfo.DeclaringType.FullName;
         someT.assembly_name = methodInfo.DeclaringType.Assembly.FullName;
         someT.component = componentBase.GetComponent(methodInfo.DeclaringType);
 
-        EditorUtility.SetDirty(componentBase.gameObject);
+        /*if (EditorGUI.EndChangeCheck())
+        {
+            EditorUtility.SetDirty(componentBase.gameObject);
+            Undo.RecordObject(componentBase.gameObject, "Changed Area Of Effect");
+        }*/
+
+        var types = methodInfo.DeclaringType.Assembly.GetTypes();
+
+
+        /*Debug.Log("someT.type_name = " + someT.type_name);
+        foreach (var item in types)
+        {
+            Debug.Log(" " + item.Name);
+        }*/
+
+
+        //Debug.Log("methodInfo.DeclaringType = " + methodInfo.DeclaringType + " componentBase.GetComponent() = " + componentBase.GetComponent(methodInfo.DeclaringType));
+        //Debug.Log("someT.component = " + someT.component);
+        
+        //property.serializedObject.ApplyModifiedProperties();
+        //property.serializedObject.SetIsDifferentCacheDirty();
+        //property.serializedObject.Update();
+        //GUI.changed = true;
+        EditorUtility.SetDirty(property.serializedObject.targetObject);
         Undo.RecordObject(property.serializedObject.targetObject, "Changed Sequence");
 
-        someT.StartMethod();
+        //someT.StartMethod();
     }
 }

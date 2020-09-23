@@ -1,4 +1,5 @@
 ﻿using RangerV;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -7,13 +8,8 @@ using UnityEngine;
 [System.Serializable]
 public class MethodHolder
 {
-
-
     //Inspector data
-    //public string note;
-    //public bool show_elem;
     public bool show_private_methods;
-    //public Vector2 scroll;
 
     //Method Data
     public string type_name;
