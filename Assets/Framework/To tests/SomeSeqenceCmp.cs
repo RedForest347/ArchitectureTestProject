@@ -32,7 +32,12 @@ public class SomeSeqenceCmp : ComponentBase, ISequence
 
     public void DoSome()
     {
-        Debug.Log("func work!!!");
+        //Debug.Log("func work!!!");
+    }
+
+    void Private()
+    {
+
     }
 
 }

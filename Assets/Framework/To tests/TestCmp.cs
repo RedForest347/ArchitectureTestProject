@@ -5,7 +5,5 @@ using RangerV;
 
 public class TestCmp : ComponentBase
 {
-
-    public MethodHolder funcHolder;
-
+    public MethodHolder methodHolder;
 }
