@@ -69,8 +69,7 @@
     <Compile Include="Assets\Framework\Editor\EntityEditor\EditorWindowCore.cs" />
     <Compile Include="Assets\Framework\Editor\EntityEditor\EditorWindowSelected.cs" />
     <Compile Include="Assets\Framework\Editor\EntityEditor\GUISkinEditor.cs" />
-    <Compile Include="Assets\Framework\Editor\MethodHolderEditor.cs" />
-    <Compile Include="Assets\Framework\Editor\SequenceInspector.cs" />
+    <Compile Include="Assets\Framework\Editor\Support\MethodHolderEditor.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.10f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

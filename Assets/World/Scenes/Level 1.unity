@@ -855,6 +855,26 @@ PrefabInstance:
       propertyPath: funcHolder.component
       value: 
       objectReference: {fileID: 5070448688324563364}
+    - target: {fileID: 5335214794196528985, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: methodHolder.type_name
+      value: SequenceEventCmp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335214794196528985, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: methodHolder.method_name
+      value: StartNext
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335214794196528985, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: methodHolder.assembly_name
+      value: Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335214794196528985, guid: ca3187c6d1436544b8cf72a0df81cb96,
+        type: 3}
+      propertyPath: methodHolder.component
+      value: 
+      objectReference: {fileID: 5070448688324563365}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca3187c6d1436544b8cf72a0df81cb96, type: 3}
 --- !u!114 &5070448688324563364 stripped
