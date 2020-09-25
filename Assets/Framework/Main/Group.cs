@@ -166,7 +166,7 @@ namespace RangerV
             entities_count--;
 
             if (EntityBase.GetEntity(entity) == null)
-                throw new Exception("EntityBase.GetEntity(entity) == null");
+                throw new Exception("Сущность == null при ее удалении)");
         }
 
         public List<Type> GetComponentTypes()

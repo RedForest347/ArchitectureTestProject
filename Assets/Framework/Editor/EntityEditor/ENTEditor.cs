@@ -19,6 +19,19 @@ namespace RangerV
             GetWindow<ENTEditor>("Entity editor");
         }
 
+        protected override void SelectionChange()
+        {
+            if (selected_object != null)
+            {
+                if (selected_object.Components.Count == Selection.activeGameObject.GetComponents<ComponentBase>().Length)
+                    Debug.Log("компоненты соответствуют действительности ");
+                else
+                {
+
+                    Debug.LogError("компоненты не соответствуют действительности ");
+                }
+            }
+        }
 
         protected override void GUIDraw()
         {
@@ -40,10 +53,12 @@ namespace RangerV
                 #region SHOW_COMPONENTS
                 EditorGUILayout.BeginHorizontal(GUIEditorSettings.box_1_1);
                 EditorGUILayout.LabelField("Components count:    " + selected_object.Components.Count, EditorStyles.boldLabel);
+
                 if (GUILayout.Button("Component manager", GUIEditorSettings.button_0, GUILayout.Width(140f), GUILayout.Height(20f)))
                 {
                     AddComponent();
                 }
+
                 EditorGUILayout.EndHorizontal();
 
                 if (selected_object.Components.Count > 0)
@@ -52,25 +67,6 @@ namespace RangerV
                     for (int component_index = 0; component_index < compBases_count; component_index++)
                     {
                         #region SHOW_COMPONENT
-
-                        #region Костыль
-
-                        //проверка на неравную размерность массива при добавлении/удалении компонента через код в рантайме
-                        //как идея - перенести удаление/добавление из/в selected_object.show_comp в EntityBase
-                        int show_comp_count = selected_object.show_comp.Count;
-                        int Components_count = selected_object.Components.Count;
-
-                        if (show_comp_count != Components_count)
-                        {
-                            Debug.LogError("show_comp_count != Components_count");
-                            while (selected_object.show_comp.Count < Components_count)
-                                selected_object.show_comp.Add(false);
-
-                            while (selected_object.show_comp.Count > Components_count)
-                                selected_object.show_comp.RemoveAt(selected_object.show_comp.Count - 1);
-                        }
-
-                        #endregion Костыль
 
                         ComponentBase component = selected_object.Components[component_index];
                         EditorGUILayout.BeginVertical();
@@ -81,10 +77,12 @@ namespace RangerV
                                 EditorGUILayout.BeginHorizontal(GUIEditorSettings.box_0_1);
                                 {
                                     EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+
                                     if (component.GetType().GetCustomAttribute<ComponentAttribute>() != null)
                                         EditorGUILayout.LabelField(new GUIContent(component.GetType().GetCustomAttribute<ComponentAttribute>().GetIcon()), GUILayout.Width(20));
                                     else
                                         EditorGUILayout.LabelField(new GUIContent(EditorGUIUtility.IconContent("dll Script Icon").image), GUILayout.Width(20));
+
                                     selected_object.show_comp[component_index] = EditorGUILayout.Foldout(selected_object.show_comp[component_index], component.GetType().ToString(), true);
                                     EditorGUILayout.EndHorizontal();
 
@@ -97,6 +95,7 @@ namespace RangerV
                                         selected_object.show_comp[component_index] = selected_object.show_comp[component_index - 1];
                                         selected_object.show_comp[component_index - 1] = b;
                                     }
+
                                     if (component_index != compBases_count - 1)
                                     {
                                         if (GUILayout.Button("↓", GUIEditorSettings.button_0, GUILayout.Width(20f)))
@@ -111,8 +110,10 @@ namespace RangerV
                                     }
                                     else
                                         EditorGUILayout.LabelField("", GUILayout.Width(20));
+
                                     if (GUILayout.Button("Remove", GUIEditorSettings.button_0, GUILayout.Width(70f)))
                                     {
+                                        Debug.Log("pressed Remove Button");
                                         RemoveItem(component_index);
                                         break;
                                     }
@@ -215,7 +216,7 @@ namespace RangerV
             //DestroyImmediate(selected_object.Components[index]);
             //selected_object.Components.RemoveAt(index);
             selected_object.RemoveCmp(selected_object.Components[index].GetType());
-            selected_object.show_comp.RemoveAt(index);
+            //selected_object.show_comp.RemoveAt(index);///
             ApplyPrefab();
         }
         void RemoveItem(object type)
@@ -242,46 +243,13 @@ namespace RangerV
 
         void ShowComponentFields(ComponentBase component, int index)
         {
-            #region REFLECTION
-            //Type type = component.GetType();
-
-            //FieldInfo[] fields_info = type.GetFields();
-
-            //for (int field = fields_info.Length - 1; field >= 0; field--)
-            //{
-            //    EditorGUILayout.BeginVertical();
-            //    {
-            //        EditorGUILayout.LabelField(fields_info[field].Name);
-            //        //EditorGUILayout.PropertyField(component);
-            //        //EditorGUILayout.PropertyField(new SerializedProperty().serializedObject.f)
-
-
-            //        EditorGUILayout.BeginVertical(contentBox);
-            //        {
-            //            Type type_ch = fields_info[field].FieldType;
-            //            FieldInfo[] fields_info_ch = type_ch.GetFields();
-
-            //            for (int field_ch = fields_info_ch.Length - 1; field_ch >= 0; field_ch--)
-            //            {
-            //                EditorGUILayout.LabelField(fields_info_ch[field_ch].Name);
-            //            }
-            //        }
-            //        EditorGUILayout.EndVertical();
-
-            //    }
-            //    EditorGUILayout.EndVertical();
-
-
-            //}
-            #endregion
-
             if (selected_object.show_comp[index])
             {
                 GUILayout.Space(3);
                 EditorGUILayout.BeginVertical(GUIEditorSettings.box_0_0);
                 {
                     EditorGUILayout.Separator();
-                    var editor = Editor.CreateEditor(component);
+                    Editor editor = Editor.CreateEditor(component);
                     editor.OnInspectorGUI();
                 }
                 EditorGUILayout.EndVertical();

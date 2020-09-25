@@ -13,4 +13,12 @@ public class TestInspector : Editor
     {
         obj = (Test)target;
     }
+
+
+    public void DDD()
+    {
+        // когда открыт префаб (выбран в файлах или открыта его сцена редактирования, buildIndex будет равен -1)
+        EditorGUILayout.HelpBox("scene.buildIndex = " + Selection.activeGameObject.scene.buildIndex, 
+            MessageType.Info);
+    }
 }

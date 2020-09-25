@@ -47,6 +47,7 @@ namespace RangerV
         {
             base.OnSelectionChange();
             CheckState();
+            SelectionChange();
         }
         protected new void OnGUI()
         {
@@ -63,16 +64,8 @@ namespace RangerV
             EditorGUILayout.EndHorizontal();
             scroll = EditorGUILayout.BeginScrollView(scroll);
             {
-                //EditorGUILayout.LabelField("selected_object :  " + (selected_object?.ToString() ?? "null"));
-                //EditorGUILayout.LabelField("Selection.activeGameObject :  " + (Selection.activeGameObject?.ToString() ?? "null"));
-                //EditorGUILayout.LabelField("Lock :  " + locked.ToString());
-                //EditorGUILayout.LabelField("selected_object_json :  " + selected_object_json));
-
                 if (!selected_object?.Equals(null) ?? false)
                 {
-                    //if (EditorSettings.useCustomSkin)
-                    //    GUI.skin = EditorSettings.skin;
-
                     GUI.color = GUIEditorSettings.mainUIColor;
                     GUI.contentColor = GUIEditorSettings.mainContentUIColor;
                     GUI.backgroundColor = GUIEditorSettings.mainBackgroundUIColor;
@@ -82,7 +75,17 @@ namespace RangerV
                 }
                 else
                 {
-                    EditorGUILayout.HelpBox("Choose entity to edit (GameObject with ENT class)", MessageType.Info);
+                    if (Selection.activeGameObject != null || true)
+                    {
+                        EditorGUILayout.HelpBox("Choose entity to edit (GameObject with ENT class)", MessageType.Info);
+
+
+                        GUIStyle buttonStyle = EditorStyles.miniButton;
+
+                        if (GUILayout.Button(new GUIContent("CreateEntity"), buttonStyle))
+                            CreateEntity();
+
+                    }
                 }
             }
             EditorGUILayout.EndScrollView();
@@ -103,6 +106,7 @@ namespace RangerV
             {
                 GameObject go = Selection.activeGameObject;
                 T obj = go?.GetComponent<T>();
+
                 if (!obj?.Equals(null) ?? false)
                 {
                     selected_object = obj;
@@ -120,8 +124,19 @@ namespace RangerV
         }
 
 
+        void CreateEntity()
+        {
+            GameObject obj = Selection.activeGameObject;
+
+            obj.AddComponent<Entity>();
+
+            EditorUtility.SetDirty(obj);
+            Undo.RecordObject(obj, "Entity created " + Selection.activeGameObject.name);
+        }
+
         protected virtual void GUIDraw() { }
         protected virtual void Enable() { }
+        protected virtual void SelectionChange() { }
 
     }
 }
