@@ -35,11 +35,9 @@ namespace RangerV
         void OnCustomDisable();
     }
 
-    public interface IStopStartProc
+    public interface IStoppable
     {
-        void Stop();
-
-        void Start();
+        void OnStop();
     }
 
     public interface ISequence

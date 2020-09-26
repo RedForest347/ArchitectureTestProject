@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using Stopwatch = System.Diagnostics.Stopwatch;
+//using System.Diagnostics;
+//using System.Diagnostics;
 //using NUnit.Framework;
 
 namespace RangerV
@@ -39,7 +41,8 @@ namespace RangerV
 
             if (processing is ICustomAwake)
                 (processing as ICustomAwake).OnAwake();
-            ManagerUpdate.Instance.AddTo(processing);
+
+            //ManagerUpdate.Add(processing);
 
             if (Starter.initialized)
                 if (processing is ICustomStart)
@@ -55,19 +58,45 @@ namespace RangerV
             return (T)resolve;
         }
 
-        public static void StartProcessings()
+        public static void StartAllProcessings()
         {
-            ProcessingBase[] prcessings = new ProcessingBase[Instance.Processings.Count];
-            Instance.Processings.Values.CopyTo(prcessings, 0);
-
-            for (int i = 0; i < Instance.Processings.Count; i++)
+            foreach (Type type in Instance.Processings.Keys)
             {
-                if (prcessings[i] is ICustomStart)
-                    (prcessings[i] as ICustomStart).OnStart();
+                StartProcessing(type);
             }
         }
 
-        public static void DisableProcessings()
+        public static void StartProcessing<T>() where T : ProcessingBase
+        {
+            StartProcessing(typeof(T));
+        }
+
+        public static void StartProcessing(Type processingType)
+        {
+            ProcessingBase processing = Instance.Processings[processingType];
+
+            if (processing is ICustomStart)
+                (processing as ICustomStart).OnStart();
+
+            ManagerUpdate.Add(processing);
+        }
+
+        public static void StopProcessing<T>() where T : ProcessingBase
+        {
+            Type processingType = typeof(T);
+
+            ProcessingBase processing = Instance.Processings[processingType];
+
+            if (processing is IStoppable)
+                (processing as IStoppable).OnStop();
+
+
+            ManagerUpdate.Remove(Instance.Processings[processingType]);
+
+
+        }
+
+        public static void DisableAllProcessings()
         {
             Dictionary<Type, ProcessingBase> processings = Instance.Processings;
             ProcessingBase[] values = new ProcessingBase[processings.Count];

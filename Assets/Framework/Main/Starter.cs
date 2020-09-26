@@ -36,7 +36,7 @@ namespace RangerV
 
         private void Start()
         {
-            GlobalSystemStorage.StartProcessings();
+            GlobalSystemStorage.StartAllProcessings();
             
         }
 
@@ -53,7 +53,7 @@ namespace RangerV
             StarterSetup();
             initialized = true;
 
-            GlobalSystemStorage.StartProcessings();
+            GlobalSystemStorage.StartAllProcessings();
             Debug.LogWarning("Произошел ребилд. При возникновении багов, опишите проблему и обратитесь к разработчику");
         }
 
@@ -95,7 +95,7 @@ namespace RangerV
                 return;
 
             ManagerUpdate.Clear();
-            GlobalSystemStorage.DisableProcessings();
+            GlobalSystemStorage.DisableAllProcessings();
             Group.Clear();
             initialized = false;
         }
@@ -107,7 +107,7 @@ namespace RangerV
 
             EntitiesDeinitializing();
             ManagerUpdate.Clear();
-            GlobalSystemStorage.DisableProcessings();
+            GlobalSystemStorage.DisableAllProcessings();
             Group.Clear();
             initialized = false;
         }

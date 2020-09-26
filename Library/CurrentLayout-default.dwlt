@@ -74,7 +74,7 @@ MonoBehaviour:
   m_MinSize: {x: 276, y: 192}
   m_MaxSize: {x: 4001, y: 8042}
   vertical: 1
-  controlID: 170
+  controlID: 106
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -94,8 +94,8 @@ MonoBehaviour:
     y: 500
     width: 503
     height: 447
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 25}
   m_Panes:
   - {fileID: 25}
@@ -123,7 +123,7 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 997
-  m_MinSize: {x: 875, y: 300}
+  m_MinSize: {x: 875, y: 542}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &6
 MonoBehaviour:
@@ -192,7 +192,7 @@ MonoBehaviour:
   m_MinSize: {x: 608, y: 492}
   m_MaxSize: {x: 18003, y: 14042}
   vertical: 0
-  controlID: 169
+  controlID: 105
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -217,7 +217,7 @@ MonoBehaviour:
   m_MinSize: {x: 332, y: 492}
   m_MaxSize: {x: 14002, y: 14042}
   vertical: 1
-  controlID: 60
+  controlID: 17
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_MinSize: {x: 303, y: 221}
   m_MaxSize: {x: 8003, y: 4021}
   vertical: 0
-  controlID: 61
+  controlID: 168
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -320,7 +320,7 @@ MonoBehaviour:
   m_MinSize: {x: 332, y: 271}
   m_MaxSize: {x: 14002, y: 10021}
   vertical: 0
-  controlID: 120
+  controlID: 18
 --- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -526,23 +526,23 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
+      m_SelectedIDs: 98350000
       m_LastClickedID: 0
-      m_ExpandedIDs: 60fbffff
+      m_ExpandedIDs: 5efbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: DObj
-        m_OriginalName: DObj
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: -1188
+        m_UserData: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 11}
       m_SearchString: 
@@ -707,20 +707,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Framework/Editor/EntityEditor
+    - Assets/Framework/Main
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/Framework/Editor/EntityEditor
+  - Assets/Framework/Main
   m_LastFoldersGridSize: 96
   m_LastProjectPath: "D:\\Unity\\\u0430\u0440\u0445\u0438\u0442\u0435\u043A\u0442\u0443\u0440\u0430\\branch"
   m_LockTracker:
     m_IsLocked: 1
   m_FolderTreeState:
     scrollPos: {x: 0, y: 31}
-    m_SelectedIDs: 523a0000
-    m_LastClickedID: 14930
-    m_ExpandedIDs: 00000000163a0000183a00001a3a00001c3a00001e3a0000203a0000223a0000243a0000263a0000303a000000ca9a3b
+    m_SelectedIDs: 2c3a0000
+    m_LastClickedID: 14892
+    m_ExpandedIDs: 00000000143a0000163a0000183a00001a3a00001c3a00001e3a0000203a0000223a0000243a00002a3a000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -748,7 +748,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000163a0000183a00001a3a00001c3a00001e3a0000203a0000223a0000243a0000263a0000
+    m_ExpandedIDs: 00000000143a0000163a0000183a00001a3a00001c3a00001e3a0000203a0000223a0000243a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -773,8 +773,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: cc320000
-    m_LastClickedInstanceID: 13004
+    m_SelectedInstanceIDs: 98350000
+    m_LastClickedInstanceID: 13720
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300006e2500006015fdff822a00009c2600002e2700002a270000ee250000d8280000b425feff3a260000dc2500007028000070260000b8270000da260000582d00003c290000a2270000ae760000222900006425000030290000762a00000000000058130000003d0000d6130000ac1500003a3d0000d63d0000
     m_RenameOverlay:
@@ -1400,20 +1400,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Framework/Editor/EntityEditor
+    - Assets/Framework/Main
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Framework/Editor/EntityEditor
+  - Assets/Framework/Main
   m_LastFoldersGridSize: 16
   m_LastProjectPath: "D:\\Unity\\\u0430\u0440\u0445\u0438\u0442\u0435\u043A\u0442\u0443\u0440\u0430\\branch"
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 63}
-    m_SelectedIDs: 523a0000
-    m_LastClickedID: 14930
-    m_ExpandedIDs: 00000000163a0000183a00001a3a00001c3a00001e3a0000203a0000223a0000243a0000263a0000303a000000ca9a3b
+    m_SelectedIDs: 2c3a0000
+    m_LastClickedID: 14892
+    m_ExpandedIDs: 00000000143a0000163a0000183a00001a3a00001c3a00001e3a0000203a0000223a0000243a00002a3a000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1441,7 +1441,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000163a0000183a00001a3a00001c3a00001e3a0000203a0000223a0000243a0000263a0000
+    m_ExpandedIDs: 00000000143a0000163a0000183a00001a3a00001c3a00001e3a0000203a0000223a0000243a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

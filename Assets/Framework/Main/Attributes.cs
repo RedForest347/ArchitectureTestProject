@@ -27,14 +27,14 @@ namespace RangerV
         public ComponentAttribute(string path, string unity_editor_icon)
         {
             this.path = path;
-#if DEBUG
+#if UNITY_EDITOR
             this.icon = EditorGUIUtility.IconContent(unity_editor_icon).image;
 #endif
         }
         public ComponentAttribute(string path)
         {
             this.path = path;
-#if DEBUG
+#if UNITY_EDITOR
             this.icon = EditorGUIUtility.IconContent("dll Script Icon").image;
 #endif
         }

@@ -120,7 +120,7 @@ namespace RangerV
                 if (Components[i] is ICustomAwake)
                     ((ICustomAwake)Components[i]).OnAwake();
 
-                ManagerUpdate.Instance.AddTo(Components[i]);
+                ManagerUpdate.Add(Components[i]);
                 Storage.AddComponent(Components[i], entity);
                 //Debug.Log("на сущность " + entity + " был добавлен компонент " + Components[i].name);
             }
@@ -144,7 +144,7 @@ namespace RangerV
         {
             
             state.enabled = false;
-            ManagerUpdate.Instance.RemoveFrom(this);
+            ManagerUpdate.Remove(this);
             Storage.RemoveFromAllStorages(entity);
 
             Entities[entity] = null;///
@@ -208,7 +208,7 @@ namespace RangerV
             if (component is ICustomAwake)
                 ((ICustomAwake)component).OnAwake();
 
-            ManagerUpdate.Instance.AddTo(component);
+            ManagerUpdate.Add(component);
 
             Components.Add(component);
             (this as Entity).show_comp.Add(false);
