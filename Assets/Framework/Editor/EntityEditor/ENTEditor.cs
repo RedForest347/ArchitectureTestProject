@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-
 using UnityEngine;
-
 using System.Reflection;
 using System;
 using System.Linq;
@@ -19,29 +17,8 @@ namespace RangerV
             GetWindow<ENTEditor>("Entity editor");
         }
 
-        protected override void SelectionChange()
-        {
-            if (selected_object != null)
-            {
-                if (selected_object.Components.Count == Selection.activeGameObject.GetComponents<ComponentBase>().Length)
-                    Debug.Log("компоненты соответствуют действительности ");
-                else
-                {
-
-                    Debug.LogError("компоненты не соответствуют действительности ");
-                }
-            }
-        }
-
         protected override void GUIDraw()
         {
-            //if (selected_object.show_comp.Count != selected_object.Components.Count)
-            //{
-            //    selected_object.show_comp = new List<bool>();
-            //    for (int i = 0; i < selected_object.Components.Count; i++)
-            //        selected_object.show_comp.Add(false);
-            //}
-
             EditorGUILayout.BeginVertical(GUIEditorSettings.box_1_0);
             {
                 EditorGUILayout.BeginVertical(GUIEditorSettings.box_1_1);
@@ -49,9 +26,13 @@ namespace RangerV
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.Separator();
 
+                CheckCmpsOnCorrect();
 
                 #region SHOW_COMPONENTS
                 EditorGUILayout.BeginHorizontal(GUIEditorSettings.box_1_1);
+
+                
+
                 EditorGUILayout.LabelField("Components count:    " + selected_object.Components.Count, EditorStyles.boldLabel);
 
                 if (GUILayout.Button("Component manager", GUIEditorSettings.button_0, GUILayout.Width(140f), GUILayout.Height(20f)))
@@ -158,7 +139,6 @@ namespace RangerV
                                      {
                                          return type.IsSubclassOf(componentType)
                                          && type.GetCustomAttribute<HideComponent>() == null;
-                                         //&& selected_object.compBases.Where(componentBase => componentBase.GetType() == type).ToList().Count == 0;
                                      })
                                      .ToList();
 
@@ -171,26 +151,22 @@ namespace RangerV
             {
                 for (int i = 0; i < add_component_list.Count; i++)
                 {
-                    if (with_component_attribute ? (add_component_list[i].GetCustomAttribute<ComponentAttribute>() != null)
-                                                 : (add_component_list[i].GetCustomAttribute<ComponentAttribute>() == null))
+                    bool contains_attribute = add_component_list[i].GetCustomAttribute<ComponentAttribute>() != null;
+                    if (with_component_attribute ? contains_attribute : (!contains_attribute))
                     {
                         string menuPath;
 
-                        if (with_component_attribute) 
+                        if (with_component_attribute)
                             menuPath = add_component_list[i].GetCustomAttribute<ComponentAttribute>().GetPath();
-                        else 
+                        else
                             menuPath = add_component_list[i].Name;
 
-                        bool set = selected_object.Components.Where(componentBase => componentBase.GetType() == add_component_list[i]).ToList().Count != 0;
+                        bool on = selected_object.Components.Where(componentBase => componentBase.GetType() == add_component_list[i]).ToList().Count != 0;
 
-                        /*if (selected_object.Components.Where(componentBase => componentBase.GetType() == add_component_list[i]).ToList().Count != 0) 
-                            set = true;
-                        */
-                        
-                        if (set) 
-                            dropdownMenu.AddItem(new GUIContent(menuPath), set, RemoveItem, add_component_list[i]);
+                        if (on) 
+                            dropdownMenu.AddItem(new GUIContent(menuPath), on, RemoveItem, add_component_list[i]);
                         else 
-                            dropdownMenu.AddItem(new GUIContent(menuPath), set, AddItem, add_component_list[i]);
+                            dropdownMenu.AddItem(new GUIContent(menuPath), on, AddItem, add_component_list[i]);
                     }
                 }
             }
@@ -201,23 +177,16 @@ namespace RangerV
         {
             if (componentType != null)
             {
-                //Component comp = selected_object.gameObject.AddComponent((Type)componentType);
-                //comp.hideFlags = HideFlags.HideInInspector;
-                //selected_object.Components.Add(comp as ComponentBase);
                 selected_object.AddCmp((Type)componentType);
-                //selected_object.show_comp.Add(false);
-                ApplyPrefab();
+                SetEntityDirty();
             }
         }
 
 
         void RemoveItem(int index)
         {
-            //DestroyImmediate(selected_object.Components[index]);
-            //selected_object.Components.RemoveAt(index);
             selected_object.RemoveCmp(selected_object.Components[index].GetType());
-            //selected_object.show_comp.RemoveAt(index);///
-            ApplyPrefab();
+            SetEntityDirty();
         }
         void RemoveItem(object type)
         {
@@ -225,20 +194,13 @@ namespace RangerV
                 if (selected_object.Components[index].GetType() == (Type)type)
                     RemoveItem(index);
 
-            ApplyPrefab();
+            SetEntityDirty();
         }
 
-        void ApplyPrefab()
+        void SetEntityDirty()
         {
-            if (selected_object.gameObject == null)
-                Debug.Log("selected_object.gameObject == null");
-
             EditorUtility.SetDirty(selected_object);
             Undo.RecordObject(selected_object, "Changed selected_object");
-
-            //PrefabUtility.ApplyPrefabInstance(selected_object.gameObject, InteractionMode.AutomatedAction); // сделать корректную отмену добавления/удаления компонентов
-            //EditorUtility.SetDirty(selected_object.gameObject);
-            //нужно как то помутить сцену грязной
         }
 
         void ShowComponentFields(ComponentBase component, int index)
@@ -257,7 +219,71 @@ namespace RangerV
             }
         }
 
-    }
-    #endregion
+        void CheckCmpsOnCorrect()
+        {
+            Component[] components = selected_gameObject.GetComponents<Component>();
+            List<ComponentBase> componentBases = selected_object.GetAllComponents();
 
+            List<Component> NeedAdd = components.Where((cmp) => cmp is ComponentBase && !componentBases.Contains(cmp as ComponentBase)).ToList();
+            List<Type> Dublicates = components.GroupBy(x => x.GetType()).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
+
+
+            bool some_components_is_null = false;
+
+
+            for (int i = 0; i < selected_object.Components.Count; i++)
+                if (selected_object.Components[i] == null)
+                    some_components_is_null = true;
+
+
+            if (NeedAdd.Count > 0 || Dublicates.Count > 0 || some_components_is_null)
+            {
+                string mes = "";
+
+                if (NeedAdd.Count > 0)
+                    mes += "на GameObject присутствуют компоненты, которые не включены в Entity \n";
+                if (Dublicates.Count > 0)
+                    mes += "на GameObject присутствуют повторяющиеся ComponentBase (фиксите сами)\n";
+                if (selected_object.Components.Contains(null))
+                    mes += "на GameObject присутствуют missing компоненты\n";
+
+                EditorGUILayout.BeginVertical(GUIEditorSettings.box_1_1);
+
+                
+
+                EditorGUILayout.HelpBox(mes, MessageType.Warning);
+
+                if (GUILayout.Button("Fix it"))
+                {
+                    FixErrors();
+                    SetEntityDirty();
+                    Debug.Log("Испавлено");
+                }
+
+                EditorGUILayout.EndVertical();
+            }
+
+
+            void FixErrors()
+            {
+                for (int i = 0; i < NeedAdd.Count; i++)
+                {
+
+                    //EntityBase entityBase = selected_object.
+                    selected_object.Components.Add(NeedAdd[i] as ComponentBase);
+                    selected_object.show_comp.Add(false);
+                }
+
+                for (int i = 0; i < selected_object.Components.Count; i++)
+                {
+                    if (selected_object.Components[i] == null)
+                    {
+                        selected_object.Components.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion
 }

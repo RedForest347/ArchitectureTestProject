@@ -9,11 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1035417122412293278}
-  - component: {fileID: 737616061211791082}
   - component: {fileID: 2985645145704161316}
-  - component: {fileID: 8833212782466082113}
   - component: {fileID: 6558813988278260886}
   - component: {fileID: 8000519904587057931}
+  - component: {fileID: 1012081841643064554}
   m_Layer: 0
   m_Name: DObj
   m_TagString: Untagged
@@ -35,21 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &737616061211791082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1035417122412293279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 455a53fa9df688b4d836b5658a8cac42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  armor: 0
-  armor_add:
-    armor_regen: 0
 --- !u!114 &2985645145704161316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,29 +48,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entity: 0
   Components:
-  - {fileID: 8833212782466082113}
+  - {fileID: 8000519904587057931}
   - {fileID: 6558813988278260886}
+  - {fileID: 1012081841643064554}
   state:
     enabled: 0
     requireStarter: 0
     initialized: 0
     runtime: 0
-  show_comp: 0000
---- !u!114 &8833212782466082113
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1035417122412293279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 455a53fa9df688b4d836b5658a8cac42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  armor: 0
-  armor_add:
-    armor_regen: 0
+  show_comp: 0000000000
 --- !u!114 &6558813988278260886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,3 +85,17 @@ MonoBehaviour:
   health: 0
   health_add:
     health_regen: 0
+--- !u!114 &1012081841643064554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035417122412293279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffaffcb4fbf4cf46bb2baef4a43a860, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 0
+  ammo: 0

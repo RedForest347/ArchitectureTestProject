@@ -62,7 +62,7 @@ namespace RangerV
                     PrefabUtility.RevertPrefabInstance(selected_gameObject, InteractionMode.UserAction);
             }
             EditorGUILayout.EndHorizontal();
-            scroll = EditorGUILayout.BeginScrollView(scroll);
+            //scroll = EditorGUILayout.BeginScrollView(scroll);
             {
                 if (!selected_object?.Equals(null) ?? false)
                 {
@@ -75,7 +75,7 @@ namespace RangerV
                 }
                 else
                 {
-                    if (Selection.activeGameObject != null || true)
+                    if (Selection.activeGameObject != null)
                     {
                         EditorGUILayout.HelpBox("Choose entity to edit (GameObject with ENT class)", MessageType.Info);
 
@@ -88,7 +88,7 @@ namespace RangerV
                     }
                 }
             }
-            EditorGUILayout.EndScrollView();
+            //EditorGUILayout.EndScrollView();
             GUILayout.FlexibleSpace();
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbarButton);
             {
