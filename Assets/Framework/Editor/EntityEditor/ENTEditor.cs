@@ -72,9 +72,9 @@ namespace RangerV
                                         selected_object.Components[component_index] = selected_object.Components[component_index - 1];
                                         selected_object.Components[component_index - 1] = component;
 
-                                        bool b = selected_object.show_comp[component_index];
+                                        bool show_comp_temp = selected_object.show_comp[component_index];
                                         selected_object.show_comp[component_index] = selected_object.show_comp[component_index - 1];
-                                        selected_object.show_comp[component_index - 1] = b;
+                                        selected_object.show_comp[component_index - 1] = show_comp_temp;
                                     }
 
                                     if (component_index != compBases_count - 1)
@@ -84,9 +84,9 @@ namespace RangerV
                                             selected_object.Components[component_index] = selected_object.Components[component_index + 1];
                                             selected_object.Components[component_index + 1] = component;
 
-                                            bool b = selected_object.show_comp[component_index];
+                                            bool show_comp_temp = selected_object.show_comp[component_index];
                                             selected_object.show_comp[component_index] = selected_object.show_comp[component_index + 1];
-                                            selected_object.show_comp[component_index + 1] = b;
+                                            selected_object.show_comp[component_index + 1] = show_comp_temp;
                                         }
                                     }
                                     else
@@ -94,7 +94,6 @@ namespace RangerV
 
                                     if (GUILayout.Button("Remove", GUIEditorSettings.button_0, GUILayout.Width(70f)))
                                     {
-                                        Debug.Log("pressed Remove Button");
                                         RemoveItem(component_index);
                                         break;
                                     }
@@ -141,6 +140,13 @@ namespace RangerV
                                          && type.GetCustomAttribute<HideComponent>() == null;
                                      })
                                      .ToList();
+
+            add_component_list.Sort((type1, type2) =>
+            {
+                return string.Compare(type1.GetCustomAttribute<ComponentAttribute>()?.GetPath() ?? type1.Name,
+                                      type2.GetCustomAttribute<ComponentAttribute>()?.GetPath() ?? type2.Name);
+            });
+
 
             AddItems(true);
             dropdownMenu.AddSeparator("");
