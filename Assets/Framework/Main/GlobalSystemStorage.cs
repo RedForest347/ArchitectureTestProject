@@ -42,8 +42,6 @@ namespace RangerV
             if (processing is ICustomAwake)
                 (processing as ICustomAwake).OnAwake();
 
-            //ManagerUpdate.Add(processing);
-
             if (Starter.initialized)
                 if (processing is ICustomStart)
                     (processing as ICustomStart).OnStart();
@@ -90,10 +88,7 @@ namespace RangerV
             if (processing is IStoppable)
                 (processing as IStoppable).OnStop();
 
-
             ManagerUpdate.Remove(Instance.Processings[processingType]);
-
-
         }
 
         public static void DisableAllProcessings()

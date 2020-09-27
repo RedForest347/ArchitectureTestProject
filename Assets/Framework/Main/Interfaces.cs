@@ -40,13 +40,6 @@ namespace RangerV
         void OnStop();
     }
 
-    public interface ISequence
-    {
-        void StartSequenceElem();
-        event Action StartNextSiquenceElem;
-    }
-
-
     public interface IReceive<T> where T : ISignal
     {
         void SignalHandler(T arg);

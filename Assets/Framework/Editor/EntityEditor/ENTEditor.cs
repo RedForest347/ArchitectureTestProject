@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace RangerV
 {
-    #region CUSTOM_ENT_EDITOR_WINDOW_V2
+    #region CUSTOM_ENT_EDITOR_WINDOW_V3
     public class ENTEditor : EditorWindowSelected<Entity>
     {
 
@@ -274,8 +274,6 @@ namespace RangerV
             {
                 for (int i = 0; i < NeedAdd.Count; i++)
                 {
-
-                    //EntityBase entityBase = selected_object.
                     selected_object.Components.Add(NeedAdd[i] as ComponentBase);
                     selected_object.show_comp.Add(false);
                 }
@@ -291,5 +289,5 @@ namespace RangerV
         }
     }
 
-    #endregion
+    #endregion CUSTOM_ENT_EDITOR_WINDOW_V3
 }

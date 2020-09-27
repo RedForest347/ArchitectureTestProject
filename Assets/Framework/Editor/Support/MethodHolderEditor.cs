@@ -15,7 +15,7 @@ namespace RangerV
     public class MethodHolderEditor : PropertyDrawer
     {
         ComponentBase componentBase;
-        MethodHolder someT;
+        MethodHolder methodHolder;
         SerializedProperty property;
 
         public override void OnGUI(Rect position, SerializedProperty _property, GUIContent label)
@@ -27,9 +27,9 @@ namespace RangerV
             GUISkin skin = GUI.skin;
 
             componentBase = (ComponentBase)(_property.serializedObject.targetObject);
-            someT = (MethodHolder)componentBase.GetType().GetField(_property.name).GetValue(_property.serializedObject.targetObject);
+            methodHolder = (MethodHolder)componentBase.GetType().GetField(_property.name).GetValue(_property.serializedObject.targetObject);
 
-            string dropdown_button_name = someT.method_name;
+            string dropdown_button_name = methodHolder.method_name;
 
 
             GUIStyle style = skin.GetStyle("Button");
@@ -42,16 +42,16 @@ namespace RangerV
 
             if (EditorGUI.DropdownButton(position, content, FocusType.Passive, style))
             {
-                CreateDropDownMenu(someT, componentBase.GetComponent<SomeSeqenceCmp>());
+                CreateDropDownMenu(methodHolder, componentBase.gameObject);
             }
 
             EditorGUI.EndProperty();
 
-            void CreateDropDownMenu(MethodHolder someT, ComponentBase componentBase)
+            void CreateDropDownMenu(MethodHolder someT, GameObject FieldHolder)
             {
                 GenericMenu dropdownMenu = new GenericMenu();
 
-                Component[] CmpList = componentBase.GetComponents<Component>();
+                Component[] CmpList = FieldHolder.GetComponents<Component>();
 
                 List<MethodInfo> methodInfos = new List<MethodInfo>(100);
 
@@ -88,17 +88,17 @@ namespace RangerV
         {
             MethodInfo methodInfo = (MethodInfo)_methodInfo;
 
-            someT.method_name = methodInfo.Name;
-            someT.type_name = methodInfo.DeclaringType.FullName;
-            someT.assembly_name = methodInfo.DeclaringType.Assembly.FullName;
-            someT.component = componentBase.GetComponent(methodInfo.DeclaringType);
+            methodHolder.method_name = methodInfo.Name;
+            methodHolder.type_name = methodInfo.DeclaringType.FullName;
+            methodHolder.assembly_name = methodInfo.DeclaringType.Assembly.FullName;
+            methodHolder.component = componentBase.GetComponent(methodInfo.DeclaringType);
 
             Type[] types = methodInfo.DeclaringType.Assembly.GetTypes();
 
             EditorUtility.SetDirty(property.serializedObject.targetObject);
             Undo.RecordObject(property.serializedObject.targetObject, "Changed Sequence");
 
-            someT.StartMethod();
+            methodHolder.CorrectDataCheck();
         }
     }
 }

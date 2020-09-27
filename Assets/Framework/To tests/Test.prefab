@@ -11,9 +11,8 @@ GameObject:
   - component: {fileID: 5070448687779044048}
   - component: {fileID: 5070448687779044049}
   - component: {fileID: 2106526672697411229}
-  - component: {fileID: 303253140106603963}
-  - component: {fileID: 5920822061885826737}
   - component: {fileID: 5335214794196528985}
+  - component: {fileID: 2822679602611207247}
   m_Layer: 0
   m_Name: Test
   m_TagString: Untagged
@@ -49,7 +48,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ents: 100
   comps: 1
-  trigger: {fileID: 0}
 --- !u!114 &2106526672697411229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,48 +61,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entity: 0
-  Components: []
+  Components:
+  - {fileID: 5335214794196528985}
   state:
     enabled: 0
     requireStarter: 0
     initialized: 0
     runtime: 0
-  show_comp: 
---- !u!114 &303253140106603963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5070448687779044050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bf81ade88175c344a05fedbc970f5da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  start_is_awake: 0
-  sequenceElemData:
-  - componentBase: {fileID: 0}
-    note: 
-    show_elem: 0
-    show_private_methods: 0
-    scroll: {x: 0, y: 0}
-    type_name: 
-    method_name: 
-    assembly_name: 
-    lincOnComponent: {fileID: 0}
---- !u!114 &5920822061885826737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5070448687779044050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29e65221792cf234da172e0e1cb24f3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  show_comp: 00
 --- !u!114 &5335214794196528985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,12 +81,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa27e1449e940994b8d796120e0c8563, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  funcHolder:
-    note: 
-    show_elem: 0
+  methodHolder:
     show_private_methods: 0
-    scroll: {x: 0, y: 0}
-    type_name: 
-    method_name: 
-    assembly_name: 
-    lincOnComponent: {fileID: 0}
+    type_name: Test
+    method_name: DDD
+    assembly_name: Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    component: {fileID: 5070448687779044049}
+--- !u!114 &2822679602611207247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5070448687779044050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94322187c6ba9d949aa0f1d1fef352b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entity: 0

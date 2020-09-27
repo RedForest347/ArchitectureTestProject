@@ -11,6 +11,8 @@ namespace RangerV
     /// <summary>
     /// создание группы:
     /// Group group = Group.Create(new ComponentsList<SomeComp1, SomeComp2>() -- компоненты --, new ComponentsList<SomeComp3, SomeComp4> -- исключения --);
+    /// применяемые интерфейсы:
+    /// ICustomAwake, ICustomStart, ICustomUpdate (ICustomFixedUpdate, ICustomLateUpdate), IStoppable, ICustomDisable, IReceive<T>
     /// </summary>
     /// <idea>
     /// Идея по оптимизации GetEnumerator
