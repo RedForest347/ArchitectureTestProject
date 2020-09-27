@@ -9,6 +9,7 @@ public class Level1Starter : Starter
     {
         GlobalSystemStorage.Add<ThreadManager>();
         GlobalSystemStorage.Add<CorutineManager>();
+        GlobalSystemStorage.Add<TestProc>();
         //GlobalSystemStorage.Add<ProcessingExample4>();
 
         //GlobalSystemStorage.Add<ProcessingExample1>();

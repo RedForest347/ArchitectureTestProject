@@ -95,6 +95,7 @@
     <Compile Include="Assets\Framework\To tests\Test.cs" />
     <Compile Include="Assets\Framework\To tests\TestCmp.cs" />
     <Compile Include="Assets\Framework\To tests\TestInspector.cs" />
+    <Compile Include="Assets\Framework\To tests\TestProc.cs" />
     <Compile Include="Assets\Scripts\Components\ArmorComponent.cs" />
     <Compile Include="Assets\Scripts\Components\CollisionComponent.cs" />
     <Compile Include="Assets\Scripts\Components\CollisionDamageComponent.cs" />

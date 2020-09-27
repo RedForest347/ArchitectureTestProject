@@ -54,10 +54,6 @@ public class TestAllSystem : MonoBehaviour
             SendErrorMessage("Компонент не был добавлен");
         if (ent1.GetComponent<TestEntity1>().GetCmp<CompTest2>() != null)
             SendErrorMessage("Ошибочное добавление компонента");
-        if (ent1.GetComponent<TestEntity1>().GetCmp<CompTest3>() != null)
-            SendErrorMessage("Ошибочное добавление компонента");
-        if (ent1.GetComponent<TestEntity1>().GetCmp<CompTest4>() != null)
-            SendErrorMessage("Ошибочное добавление компонента");
 
         GameObject ent2 = new GameObject();
         gameObjects.Add(ent2);
@@ -66,22 +62,10 @@ public class TestAllSystem : MonoBehaviour
             SendErrorMessage("Компонент не был добавлен");
         if (ent2.GetComponent<TestEntity2>().GetCmp<CompTest2>() == null)
             SendErrorMessage("Компонент не был добавлен");
-        if (ent2.GetComponent<TestEntity2>().GetCmp<CompTest3>() == null)
-            SendErrorMessage("Компонент не был добавлен");
-        if (ent2.GetComponent<TestEntity2>().GetCmp<CompTest4>() == null)
-            SendErrorMessage("Компонент не был добавлен");
 
         GameObject ent3 = new GameObject();
         gameObjects.Add(ent3);
         ent3.AddComponent<TestEntity3>();
-        if (ent3.GetComponent<TestEntity3>().GetCmp<CompTest1>() == null)
-            SendErrorMessage("Компонент не был добавлен");
-        if (ent3.GetComponent<TestEntity3>().GetCmp<CompTest2>() == null)
-            SendErrorMessage("Компонент не был добавлен");
-        if (ent3.GetComponent<TestEntity3>().GetCmp<CompTest3>() == null)
-            SendErrorMessage("Компонент не был добавлен");
-        if (ent3.GetComponent<TestEntity3>().GetCmp<CompTest4>() == null)
-            SendErrorMessage("Компонент не был добавлен");
 
         #endregion correct add component test
 
@@ -158,8 +142,6 @@ public class TestAllSystem : MonoBehaviour
         gameObjects.Add(ent7);
         ent7.AddComponent<TestEntity7>();
 
-        //Debug.Log("group No" + group8.GetHashCode() % 1631);
-
         if (group8.entities_count != start_count + 1)
             SendErrorMessage("Некорректное поведение группы при пустом листе компонентов ");
         group8.Delete(); // должна быть здесь
@@ -189,6 +171,11 @@ public class TestAllSystem : MonoBehaviour
         if (group7.entities_count == 0)
             SendErrorMessage("Ошибки при создании группы в рантайме");
 
+        Group groupNullGroup = Group.Create(new ComponentsList());
+        if (groupNullGroup.entities_count == EntityBase.entity_count)
+            SendErrorMessage("Ошибки при создании группы с пустым листом компонентов");
+        groupNullGroup.Delete();
+
         #endregion CreateGroupInRuntime
 
         #region DeleteGameObjects
@@ -212,7 +199,7 @@ public class TestAllSystem : MonoBehaviour
             for (int i = 0; i < groups.Count; i++)
                 mes += groups[i].entities_count;
 
-            SendErrorMessage("при окончании теста в группах находятся сущности " + mes);
+            SendErrorMessage("при окончании теста в группах находятся сущности, хотя они были удалены " + mes);
         }
 
         #endregion Others
