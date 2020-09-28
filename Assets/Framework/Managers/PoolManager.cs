@@ -70,7 +70,7 @@ namespace RangerV
             {
                 OutObject = Instantiate(prefab, position, rotation);
                 EntityBase entityBase = OutObject.GetComponent<EntityBase>();
-                PoolComponent poolComponent = entityBase?.GetEntityComponent<PoolComponent>();
+                PoolComponent poolComponent = entityBase?.GetCmp<PoolComponent>();
 
                 if (poolComponent != null)
                 {
@@ -104,9 +104,9 @@ namespace RangerV
 
         public static void DestroyS(EntityBase entityBase)
         {
-            if (entityBase?.GetEntityComponent<PoolComponent>() != null)
+            if (entityBase?.GetCmp<PoolComponent>() != null)
             {
-                int pool_id = entityBase.GetEntityComponent<PoolComponent>().id;
+                int pool_id = entityBase.GetCmp<PoolComponent>().id;
 
                 if (poolDictionary.ContainsKey(pool_id))
                 {
@@ -155,7 +155,7 @@ namespace RangerV
             {
                 GameObject newObject = Object.Instantiate(Prefab);
                 EntityBase entityBase = newObject.GetComponent<EntityBase>();
-                entityBase.GetEntityComponent<PoolComponent>().id = Prefab.GetInstanceID();
+                entityBase.GetCmp<PoolComponent>().id = Prefab.GetInstanceID();
                 PoolObjectData poolObject = new PoolObjectData(CellParent.transform, entityBase);
                 poolObject.SetNullParam();
                 PoolObjectStack.Push(poolObject);
@@ -174,7 +174,7 @@ namespace RangerV
             else
             {
                 GameObject obj = Object.Instantiate(Prefab, position, rotation, Parent);
-                obj.GetComponent<EntityBase>().GetEntityComponent<PoolComponent>().id = Prefab.GetInstanceID();
+                obj.GetComponent<EntityBase>().GetCmp<PoolComponent>().id = Prefab.GetInstanceID();
                 optimal_pool_count++;
                 return obj;
             }
@@ -236,7 +236,7 @@ namespace RangerV
             {
                 for (int i = 0; i < components.Count; i++)
                     if (!listType.Contains(components[i].GetType()))
-                        entityBase.RemoveComponent(components[i].GetType());
+                        entityBase.RemoveCmp(components[i].GetType());
 
                 //entityBase.GetAllComponents(out components, out componentTypes);
                 

@@ -1,13 +1,19 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace RangerV
 {
     public class SignalManager<T> where T : ISignal, new()
     {
-        public static SignalManager<T> SignalManagerInstance = new SignalManager<T>();
+        static SignalManager<T> instance;
+        public static SignalManager<T> Instance 
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new SignalManager<T>();
+                return instance;
+            }
+        }
 
         delegate void SignalHandler(T arg);
         event SignalHandler signalHandler;
@@ -22,12 +28,9 @@ namespace RangerV
             signalHandler -= receiver.SignalHandler;
         }
 
-        public void SendSignal(T arg)
+        public static void SendSignal(T arg)
         {
-            if (signalHandler != null)
-                signalHandler(arg);
-            else
-                Debug.LogWarning("SignalHandler of " + typeof(T) + " is null");
+            Instance.signalHandler?.Invoke(arg);
         }
 
     }

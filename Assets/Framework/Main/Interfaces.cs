@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,10 +32,15 @@ namespace RangerV
 
     public interface ICustomDisable
     {
-        void OnDisable();
+        void OnCustomDisable();
     }
 
-    public interface IReceive<T> where T : ISignal, new()
+    public interface IStoppable
+    {
+        void OnStop();
+    }
+
+    public interface IReceive<T> where T : ISignal
     {
         void SignalHandler(T arg);
     }

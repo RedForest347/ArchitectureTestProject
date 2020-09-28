@@ -2,12 +2,10 @@
 using UnityEngine;
 using System;
 using System.Linq;
+using RangerV.Support;
 
 namespace RangerV
 {
-    /// <summary>
-    /// Базовый класс Entity
-    /// </summary>
     public abstract class EntityBase : MonoBehaviour
     {
         public static event Action<int> OnCreateEntityID;
@@ -19,10 +17,6 @@ namespace RangerV
         static EntityBase[] Entities { get => EntityBaseData.Instance.Entities; }
         static Stack<int> freeID { get => EntityBaseData.Instance.freeID; }
         static int nextMax { get => EntityBaseData.Instance.nextMax; set => EntityBaseData.Instance.nextMax = value; } 
-
-        /// <summary>
-        /// нулевой элемент не должен быть занят
-        /// </summary>
 
         public static int entity_count { get => EntityBaseData.Instance.nextMax; }
 
@@ -42,65 +36,8 @@ namespace RangerV
             return Entities[entity] != null;
         }
 
-        //разобрать причинно-следственные связи //устарело
-        /// <summary>
-        /// ----------до----------
-        /// 
-        /// попытаюсь расписать хронологию событий:
-        /// 
-        /// 1) Awake
-        ///     CreateEntity(this); // - присваевается номер сущности
-        ///     SetupAfterStarter()
-        ///         state.requireStarter = false;
-        ///         Setup();
-        ///             добавление компонентов
-        ///         
-        ///  !!!!!!!!!с этого момента с сущностью могут работать процессинги!!!!!!!!!
-        ///  
-        ///         OnEnable();
-        ///             state.enabled = true;
-        ///             ManagerUpdate.InstanceManagerUpdate.AddTo(this); // - добавление себя в ManagerUpdate
-        ///             Storage.AddToAllStorages(Components, entity); // нужно при повторном включении 
-        ///         state.initialized = true;
-        ///      
-        /// 2) OnEnable
-        ///     state.enabled = true;
-        ///     ManagerUpdate.InstanceManagerUpdate.AddTo(this); // - добавление себя в ManagerUpdate (повторно)
-        ///     Storage.AddToAllStorages(Components, entity); // нужно при повторном включении 
-        /// 
-        /// 3) Start
-        ///     отсутствует
-        ///     
-        /// 4) OnDisable
-        ///     OnDeactivate();
-        ///         state.enabled = false;
-        ///         ManagerUpdate.InstanceManagerUpdate.RemoveFrom(this); // - удаление себя из ManagerUpdate
-        ///         Storage.RemoveFromAllStorages(entity);
-        ///         
-        /// 5) OnEnable
-        ///     state.enabled = true;
-        ///     ManagerUpdate.InstanceManagerUpdate.AddTo(this); // - добавление себя в ManagerUpdate
-        ///     Storage.AddToAllStorages(Components, entity); // нужно при повторном включении 
-        /// 
-        /// 6) OnDisable
-        ///     OnDeactivate();
-        ///         state.enabled = false;
-        ///         ManagerUpdate.InstanceManagerUpdate.RemoveFrom(this); // - удаление себя из ManagerUpdate
-        ///         Storage.RemoveFromAllStorages(entity);
-        /// 
-        /// 7) OnDestroy
-        ///     state.in_game = false;
-        ///     OnDeactivate();
-        ///         state.enabled = false;
-        ///         ManagerUpdate.InstanceManagerUpdate.RemoveFrom(this);
-        ///         Storage.RemoveFromAllStorages(entity);
-        ///     freeID.Push(entity);
-        ///     Entities[entity] = null;
-        /// 
-        /// </summary>
         public void Awake()
         {
-            //Debug.Log("Awake");
             state.runtime = true;
             CreateEntityID();
 
@@ -126,7 +63,7 @@ namespace RangerV
                 if (Components[i] is ICustomAwake)
                     ((ICustomAwake)Components[i]).OnAwake();
 
-                ManagerUpdate.Instance.AddTo(Components[i]);
+                ManagerUpdate.Add(Components[i]);
                 Storage.AddComponent(Components[i], entity);
             }
 
@@ -149,10 +86,10 @@ namespace RangerV
         {
             
             state.enabled = false;
-            ManagerUpdate.Instance.RemoveFrom(this);
+            ManagerUpdate.Remove(this);
             Storage.RemoveFromAllStorages(entity);
 
-            Entities[entity] = null;///
+            Entities[entity] = null;
 
             OnDestroyEntity?.Invoke(entity);
         }
@@ -187,25 +124,23 @@ namespace RangerV
 
         #region ADD/REMOVE
 
-        public T Add<T>() where T : ComponentBase, IComponent, new()
+        public T AddCmp<T>() where T : ComponentBase, IComponent, new()
         {
-            return (T)Add(typeof(T));
+            return (T)AddCmp(typeof(T));
         }
 
-        public ComponentBase Add(Type componentType)
+        public ComponentBase AddCmp(Type componentType)
         {
             if (componentType == typeof(ComponentBase))
-            {
-                Debug.LogError("Попытка добавить ComponentBase");
-                return null;
-            }
+                throw new Exception("Попытка добавить ComponentBase " + componentType);
 
             if (!state.runtime)
-                return Add_InEditorMode(componentType);
+                return AddCmpInEditorMode(componentType);
 
             if (Storage.ContainsComponent(componentType, entity))
             {
-                Debug.LogWarning("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity + " (" + EntityBase.GetEntity(entity).gameObject.name + ")." + " компонент добавлен не будет");
+                Debug.LogWarning("попытка добавить уже существующий компонент " + componentType + " к сущности " + entity + 
+                    " (" + GetEntity(entity).gameObject.name + ")." + " компонент добавлен не будет");
                 return null;
             }
 
@@ -214,20 +149,18 @@ namespace RangerV
             if (component is ICustomAwake)
                 ((ICustomAwake)component).OnAwake();
 
-            ManagerUpdate.Instance.AddTo(component);
+            ManagerUpdate.Add(component);
 
             Components.Add(component);
+            (this as Entity).show_comp.Add(false);
+
             Storage.AddComponent(component, entity);
             
             return component;
         }
 
-        /// <summary>
-        /// общая чать для добавление компонента в EditorMode
-        /// </summary>
-        /// <param name="componentType">тип компонента, который требуется добавить</param>
-        /// <returns>компонент, если он был добавлен, null если не был</returns>
-        ComponentBase Add_InEditorMode(Type componentType)
+
+        ComponentBase AddCmpInEditorMode(Type componentType)
         {
             if (Components.Any(comp => comp.GetType() == componentType))
             {
@@ -237,51 +170,55 @@ namespace RangerV
 
             ComponentBase _component = (ComponentBase)gameObject.AddComponent(componentType);
             Components.Add(_component);
+            (this as Entity).show_comp.Add(false);
+
             return _component;
         }
 
-        public bool RemoveComponent<T>() where T : ComponentBase, IComponent, new()
+        public bool RemoveCmp<T>() where T : ComponentBase, IComponent, new()
         {
-            if (!state.runtime)
-                return RemoveInEditorMode(typeof(T));
+            return RemoveCmp(typeof(T));
+            /*if (!state.runtime)
+                return RemoveCmpInEditorMode(typeof(T));
 
             if (!Storage.ContainsComponent<T>(entity))
                 return false;
 
-            Destroy(GetEntityComponent<T>());
+            Destroy(GetCmp<T>());
             Storage.RemoveComponent<T>(entity);
-            RemoveComponentFromLists(typeof(T));
-            return true;
+            RemoveCmpFromLists(typeof(T));
+            return true;*/
         }
 
-        public bool RemoveComponent(Type componentType)
+        public bool RemoveCmp(Type componentType)
         {
             if (!state.runtime)
-                return RemoveInEditorMode(componentType);
+                return RemoveCmpInEditorMode(componentType);
 
             if (!Storage.ContainsComponent(componentType, entity))
                 return false;
 
-            Destroy(GetEntityComponent(componentType));
+            Destroy(GetCmp(componentType));
             Storage.RemoveComponent(componentType, entity);
-            RemoveComponentFromLists(componentType);
+            RemoveCmpFromLists(componentType);
             return true;
         }
 
-        bool RemoveComponentFromLists(Type componentType)
+        bool RemoveCmpFromLists(Type componentType)
         {
             for (int i = 0; i < Components.Count; i++)
             {
                 if (Components[i].GetType() == componentType)
                 {
                     Components.RemoveAt(i);
+                    (this as Entity).show_comp.RemoveAt(i);
                     return true;
                 }
             }
             return false;
         }
 
-        bool RemoveInEditorMode(Type componentType)
+        bool RemoveCmpInEditorMode(Type componentType)
         {
             int index = IndexOf(componentType);
 
@@ -290,6 +227,7 @@ namespace RangerV
 
             DestroyImmediate(Components[index]);
             Components.RemoveAt(index);
+            (this as Entity).show_comp.RemoveAt(index);
             return true;
         }
 
@@ -298,6 +236,7 @@ namespace RangerV
             for (int i = 0; i < Components.Count; i++)
                 if (Components[i].GetType() == ComponentType)
                     return i;
+
             return -1;
         }
 
@@ -315,23 +254,29 @@ namespace RangerV
             return componentBases;
         }
 
-        public T GetEntityComponent<T>() where T : ComponentBase, IComponent, new()
+        public T GetCmp<T>() where T : ComponentBase, IComponent, new()
         {
             return Storage.GetComponent<T>(entity);
         }
 
-        public ComponentBase GetEntityComponent(Type type)
+        public ComponentBase GetCmp(Type type)
         {
+            if (type == null)
+                Debug.LogException(new ArgumentNullException("parametr name: type"));
+
             return Storage.GetComponent(type, entity);
         }
 
-        public bool ContainsEntityComponent<T>() where T : ComponentBase, IComponent, new()
+        public bool ContainsCmp<T>() where T : ComponentBase, IComponent, new()
         {
             return Storage.ContainsComponent<T>(entity) ? true : false;
         }
 
-        public bool ContainsEntityComponent(Type type)
+        public bool ContainsCmp(Type type)
         {
+            if (type == null)
+                Debug.LogException(new ArgumentNullException("parametr name: type"));
+
             return Storage.ContainsComponent(type, entity) ? true : false;
         }
 
@@ -343,22 +288,29 @@ namespace RangerV
 
 
     }
+}
 
+
+namespace RangerV.Support
+{
     /// <summary>
-    /// костыль. его суть - хранить статическую дату для  EntityBase в нестатическом виде для нормального
-    /// восстановления после ребилдинга. хорошо бы переделать в более правильный вид
+    /// костыль. его суть - хранить статические данные для EntityBase на синглтоне
     /// </summary>
     public class EntityBaseData : MonoBehaviour
     {
         public static EntityBaseData Instance { get => Singleton<EntityBaseData>.Instance; }
 
+        /// <summary>
+        /// нулевой элемент не должен быть занят
+        /// </summary>
         public EntityBase[] Entities;
         public Stack<int> freeID;
+
         public int nextMax;
 
         EntityBaseData()
         {
-            Entities = new EntityBase[10];
+            Entities = new EntityBase[40];
             nextMax = 1;
             freeID = new Stack<int>(25);
         }

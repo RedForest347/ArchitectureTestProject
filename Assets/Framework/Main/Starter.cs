@@ -12,25 +12,32 @@ namespace RangerV
     // При добавлении в GSS словарь, на processing"е выполняется метод OnAwake (при наличии интерфейса IAwake).
     //
     // 1) создается ManagerUpdate
-    // 2) происходит StarterSetup отвечающий за добавление processing'ов
+    // 2) происходит StarterSetup отвечающий за добавление processing'ов (именно его нужно прописать в стартере уровня)
     // 3) при добавлении на processing"е выполняется метод OnAwake
     //
     //
 
     public class Starter : MonoBehaviour        
     {
-        public static bool initialized;
+        public static bool initialized { get; private set; }
 
         private void Awake()
         {
+            //initialized = false;
+            //Debug.Log("initialized = " + initialized);
             ManagerUpdate.Init();
             GlobalSystemStorage.Init();
             StarterSetup();
-            initialized = true;
+            
             EntitiesInitializing();
-            GlobalSystemStorage.Instance.StartProcessings();
-
+            initialized = true;
             Debug.Log("initialized:   " + initialized);
+        }
+
+        private void Start()
+        {
+            GlobalSystemStorage.StartAllProcessings();
+            
         }
 
         private void OnEnable()
@@ -46,7 +53,7 @@ namespace RangerV
             StarterSetup();
             initialized = true;
 
-            GlobalSystemStorage.Instance.StartProcessings();
+            GlobalSystemStorage.StartAllProcessings();
             Debug.LogWarning("Произошел ребилд. При возникновении багов, опишите проблему и обратитесь к разработчику");
         }
 
@@ -88,7 +95,7 @@ namespace RangerV
                 return;
 
             ManagerUpdate.Clear();
-            GlobalSystemStorage.StopProcessings();
+            GlobalSystemStorage.DisableAllProcessings();
             Group.Clear();
             initialized = false;
         }
@@ -100,7 +107,7 @@ namespace RangerV
 
             EntitiesDeinitializing();
             ManagerUpdate.Clear();
-            GlobalSystemStorage.StopProcessings();
+            GlobalSystemStorage.DisableAllProcessings();
             Group.Clear();
             initialized = false;
         }

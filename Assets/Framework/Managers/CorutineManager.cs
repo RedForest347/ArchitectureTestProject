@@ -1,18 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using static RangerV.ThreadManager;
 
 namespace RangerV
 {
-    public class CorutineManager : ProcessingBase, ICustomFixedUpdate, ICustomUpdate, ICustomAwake
+    public class CorutineManager : ProcessingBase, ICustomFixedUpdate, ICustomUpdate
     {
         static List<IEnumerator> corutines_update;
         static List<IEnumerator> corutines_fixed_update;
 
-        public void OnAwake()
+        static bool was_init;
+
+        static CorutineManager()
         {
-            corutines_update = new List<IEnumerator>();
-            corutines_fixed_update = new List<IEnumerator>();
+            Init();
+        }
+
+        static void Init()
+        {
+            if (!was_init)
+            {
+                corutines_update = new List<IEnumerator>();
+                corutines_fixed_update = new List<IEnumerator>();
+                was_init = true;
+            }
         }
 
         public void CustomUpdate()

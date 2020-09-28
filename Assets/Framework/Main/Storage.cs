@@ -14,7 +14,7 @@ namespace RangerV
         protected EntityData entityData = new EntityData();
 
         public virtual event Action<int> OnAdd;
-        public virtual event Action<int> OnRemove;
+        public virtual event Action<int> OnBeforeRemove;
 
         protected static Dictionary<Type, Storage> StorageDictionary = new Dictionary<Type, Storage>();
 
@@ -63,6 +63,12 @@ namespace RangerV
                 StorageDictionary[componentType].Remove(entity);
         }
 
+
+        /// <summary>
+        /// Должна вызываться только из EntityBase
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entity"></param>
         public static void RemoveComponent<T>(int entity) where T : ComponentBase, IComponent, new()
         {
             Storage<T>.Instance.Remove(entity);
@@ -142,12 +148,12 @@ namespace RangerV
         public static Storage<T> Instance;
 
         public override event Action<int> OnAdd;
-        public override event Action<int> OnRemove;
+        public override event Action<int> OnBeforeRemove;
 
         static Storage()
         {
             if (typeof(T) == typeof(ComponentBase))
-                Debug.LogError("создан Storage с типом ComponentBase");
+                throw new Exception("создан Storage с типом ComponentBase");
 
             Storage<T> storage = new Storage<T>();
             StorageDictionary.Add(typeof(T), storage);
@@ -184,8 +190,10 @@ namespace RangerV
             if (!entityData[entity].have_component)
                 return;
 
+            OnBeforeRemove?.Invoke(entity);
+
             entityData[entity].SetDefault();
-            OnRemove?.Invoke(entity);
+            
         }
     }
 }

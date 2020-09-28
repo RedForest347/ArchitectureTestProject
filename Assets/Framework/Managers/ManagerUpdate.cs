@@ -26,33 +26,30 @@ namespace RangerV
         }
 
 
-        public void AddTo(object updateble)      //посылаем сюда object унаследованный от ICustomUpdate/ICustomFixedUpdate/ICustomLateUpdate
+        public static void Add(object updateble)      //посылаем сюда object унаследованный от ICustomUpdate/ICustomFixedUpdate/ICustomLateUpdate
         {
-            ManagerUpdate mngUpdate = Instance;
-
             if (updateble is ICustomUpdate)
-                mngUpdate.updates.Add(updateble as ICustomUpdate);
+                Instance.updates.Add(updateble as ICustomUpdate);
 
             if (updateble is ICustomFixedUpdate)
-                mngUpdate.fixedupdates.Add(updateble as ICustomFixedUpdate);
+                Instance.fixedupdates.Add(updateble as ICustomFixedUpdate);
 
             if (updateble is ICustomLateUpdate)
-                mngUpdate.lateupdates.Add(updateble as ICustomLateUpdate);
+                Instance.lateupdates.Add(updateble as ICustomLateUpdate);
 
         }
 
-        public void RemoveFrom(object updateble)     //посылаем сюда object унаследованный от ICustomUpdate/ICustomFixedUpdate/ICustomLateUpdate
+        public static void Remove(object updateble)     //посылаем сюда object унаследованный от ICustomUpdate/ICustomFixedUpdate/ICustomLateUpdate
         {
-            ManagerUpdate mngUpdate = Instance;
-
             if (updateble is ICustomUpdate)
-                mngUpdate.updates.Remove(updateble as ICustomUpdate);
+                Instance.updates.Remove(updateble as ICustomUpdate);
 
             if (updateble is ICustomFixedUpdate)
-                mngUpdate.fixedupdates.Remove(updateble as ICustomFixedUpdate);
+                Instance.fixedupdates.Remove(updateble as ICustomFixedUpdate);
 
             if (updateble is ICustomLateUpdate)
-                mngUpdate.lateupdates.Remove(updateble as ICustomLateUpdate);
+                Instance.lateupdates.Remove(updateble as ICustomLateUpdate);
+
         }
 
 
