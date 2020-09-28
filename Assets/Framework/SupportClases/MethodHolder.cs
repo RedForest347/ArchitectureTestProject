@@ -25,7 +25,7 @@ namespace RangerV
         /// <summary>
         /// проверка введенных данных на корректность путем попытки получения записанного ранее метода с помощбю рефлексии
         /// </summary>
-        public void CorrectDataCheck()
+        public void DataCheckOnCorrect()
         {
             BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.NonPublic;
             Assembly.Load(assembly_name).GetType(type_name).GetMethod(method_name, bindingFlags);

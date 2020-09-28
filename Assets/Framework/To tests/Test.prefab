@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5070448687779044049}
   - component: {fileID: 2106526672697411229}
   - component: {fileID: 5335214794196528985}
-  - component: {fileID: 2822679602611207247}
+  - component: {fileID: 1782964898891442701}
   m_Layer: 0
   m_Name: Test
   m_TagString: Untagged
@@ -82,12 +82,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   methodHolder:
-    show_private_methods: 0
     type_name: Test
     method_name: DDD
     assembly_name: Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     component: {fileID: 5070448687779044049}
---- !u!114 &2822679602611207247
+--- !u!114 &1782964898891442701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

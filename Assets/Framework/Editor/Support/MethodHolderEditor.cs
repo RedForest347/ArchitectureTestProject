@@ -98,7 +98,7 @@ namespace RangerV
             EditorUtility.SetDirty(property.serializedObject.targetObject);
             Undo.RecordObject(property.serializedObject.targetObject, "Changed Sequence");
 
-            methodHolder.CorrectDataCheck();
+            methodHolder.DataCheckOnCorrect();
         }
     }
 }
