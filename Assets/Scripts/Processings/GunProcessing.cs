@@ -3,6 +3,7 @@ using RangerV;
 
 public class GunProcessing : ProcessingBase, ICustomStart, ICustomUpdate
 {
+    Group SomeGroup = Group.Create(new ComponentsList<PlasmaGunComponent, GameObjectComponent, TimerComponent>(), new ComponentsList<PlasmaGunComponent, GameObjectComponent, TimerComponent>());
     Group gun_group = Group.Create(new ComponentsList<PlasmaGunComponent, GameObjectComponent, TimerComponent>());
 
     PlasmaGunComponent plasmaGunComponent;
