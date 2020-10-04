@@ -89,6 +89,7 @@
     <Compile Include="Assets\Framework\SomeExamples\ProcessingExample.cs" />
     <Compile Include="Assets\Framework\SupportClases\ExtensibleArray.cs" />
     <Compile Include="Assets\Framework\SupportClases\MethodHolder.cs" />
+    <Compile Include="Assets\Framework\To tests\ProcMesHelper.cs" />
     <Compile Include="Assets\Framework\To tests\Test.cs" />
     <Compile Include="Assets\Framework\To tests\TestCmp.cs" />
     <Compile Include="Assets\Framework\To tests\TestInspector.cs" />

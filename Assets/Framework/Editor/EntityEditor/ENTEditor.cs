@@ -10,6 +10,21 @@ namespace RangerV
     #region CUSTOM_ENT_EDITOR_WINDOW_V3
     public class ENTEditor : EditorWindowSelected<Entity>
     {
+        string proc_mes;
+        bool should_show;
+
+        protected override void Enable()
+        {
+            proc_mes = ProcMesHelper.CreateSupportProcInfo(selected_object);
+        }
+
+        protected override void SelectionChange()
+        {
+            if (selected_object != null)
+            {
+                proc_mes = ProcMesHelper.CreateSupportProcInfo(selected_object);
+            }
+        }
 
         [MenuItem("Window/Entity editor")]
         static void GetWindow()
@@ -27,6 +42,7 @@ namespace RangerV
                 EditorGUILayout.Separator();
 
                 CheckCmpsOnCorrect();
+                
 
                 #region SHOW_COMPONENTS
                 EditorGUILayout.BeginHorizontal(GUIEditorSettings.box_1_1);
@@ -41,6 +57,20 @@ namespace RangerV
                 }
 
                 EditorGUILayout.EndHorizontal();
+
+                /*EditorGUILayout.BeginHorizontal();
+                {
+                    should_show = EditorGUILayout.Foldout(should_show, "should show proc helper", true);
+                    if (should_show)
+                    {
+                        //EditorGUILayout.TextField("\n" + proc_mes);
+                        GUILayout.Space(20);
+                        EditorGUILayout.BeginVertical();
+                        GUILayout.Box("\n" + proc_mes);
+                        EditorGUILayout.EndVertical();
+                    }
+                }
+                EditorGUILayout.EndHorizontal();*/
 
                 if (selected_object.Components.Count > 0)
                 {
@@ -114,10 +144,35 @@ namespace RangerV
                                 EditorGUILayout.EndHorizontal();
                             }
                         }
+
+                        
+
                         EditorGUILayout.EndVertical();
                         #endregion
                     }
+
+                    EditorGUILayout.BeginVertical();
+                    {
+                        EditorGUILayout.BeginHorizontal(GUIEditorSettings.box_0_1);
+                        {
+                            should_show = EditorGUILayout.Foldout(should_show, "should show proc helper", true);
+                            if (should_show)
+                            {
+                                //EditorGUILayout.TextField("\n" + proc_mes);
+                                //GUILayout.Space(20);
+                                //EditorGUILayout.BeginVertical();
+                                GUILayout.Box("\n" + proc_mes);
+                                //EditorGUILayout.TextArea(proc_mes);
+                                //EditorGUILayout.EndVertical();
+                            }
+                        }
+                        EditorGUILayout.EndHorizontal();
+                    }
+                    EditorGUILayout.EndVertical();
                 }
+
+                
+                
                 #endregion
             }
             EditorGUILayout.EndHorizontal();
